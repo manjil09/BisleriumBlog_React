@@ -2,19 +2,21 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import Loader from '../componts/Loader/Loader';
+import { useParams } from 'react-router-dom';
 
 
 
 const BlogView = () => {
-  const [blogs, setBlogs] = useState([]);
+  const {id} = useParams();
+  const [blog, setBlogs] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://localhost:7271/api/blog/getAll');
-        setBlogs(response.data.result.blogs);
-        console.log('message:', response.data.result.blogs);
+        const response = await axios.get(`https://localhost:7271/api/blog/getById/${id}`);
+        setBlogs(response.data.result);
+        console.log('message:', response.data.result);
 
         setLoading(false);
       } catch (error) {
@@ -26,20 +28,20 @@ const BlogView = () => {
     fetchData();
   }, []);
 
-  const handleUpvote = (index) => {
+  const handleUpvote = (id) => {
     // Increment the upvote count of the blog post at the specified index
-    const updatedBlogs = [...blogs];
-    updatedBlogs[index].upvotes += 1;
-    setBlogs(updatedBlogs);
+    // const updatedBlogs = [...blogs];
+    // updatedBlogs[index].upvotes += 1;
+    // setBlogs(updatedBlogs);
     // Send the updated upvote count to the server
     // You can use axios.post() to send the updated data to the server
   };
 
-  const handleDownvote = (index) => {
+  const handleDownvote = (id) => {
     // Decrement the downvote count of the blog post at the specified index
-    const updatedBlogs = [...blogs];
-    updatedBlogs[index].downvotes += 1;
-    setBlogs(updatedBlogs);
+    // const updatedBlogs = [...blog];
+    // updatedBlogs[index].downvotes += 1;
+    // setBlogs(updatedBlogs);
     // Send the updated downvote count to the server
     // You can use axios.post() to send the updated data to the server
   };
@@ -63,9 +65,8 @@ const BlogView = () => {
               
             </div>
           <div>
-            {blogs.length > 0 ? (
-              blogs.map((blog, index) => (
-                <div key={index} className="bg-gray shadow-md rounded-md p-6 mb-6">
+            {blog != null ? (
+                <div key={id} className="bg-gray shadow-md rounded-md p-6 mb-6">
                   <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
                   <p className="text-gray-700 mb-4">{blog.body}</p>
                   <img src={blog.image} alt="Image" className="w-full mb-4 rounded-lg" />
@@ -73,10 +74,10 @@ const BlogView = () => {
                   <p className="text-gray-600">Last Updated: {new Date(blog.updatedAt).toLocaleString()}</p>
                   <div className="flex justify-between items-center mt-4">
                     <div>
-                      <button onClick={() => handleUpvote(index)} className="bg-green-500 text-white px-4 py-2 rounded-lg mr-4">
+                      <button onClick={() => handleUpvote(id)} className="bg-green-500 text-white px-4 py-2 rounded-lg mr-4">
                         Upvote
                       </button>
-                      <button onClick={() => handleDownvote(index)} className="bg-red-500 text-white px-4 py-2 rounded-lg">
+                      <button onClick={() => handleDownvote(id)} className="bg-red-500 text-white px-4 py-2 rounded-lg">
                         Downvote
                       </button>
                     </div>
@@ -98,7 +99,7 @@ const BlogView = () => {
                     ))}
                   </ul> */}
                 </div>
-              ))
+              
             ) : (
               <p>No blogs found.</p>
             )}

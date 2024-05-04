@@ -7,16 +7,19 @@ import { useNavigate } from 'react-router-dom';
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [sortBy, setSortBy] = useState('recency'); // Default sort by recency
+  const url = `https://localhost:7271/api/blog/getAll?sortBy=${sortBy}`;
   let navigate = useNavigate();
+
   const handleCardClick = (index) => {
     let path = `/blogView/${index}`;
     navigate(path);
-  }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://localhost:7271/api/blog/getAll');
+        const response = await axios.get(url);
         setBlogs(response.data.result.blogs);
         setLoading(false);
       } catch (error) {
@@ -27,18 +30,55 @@ const Home = () => {
 
     fetchData();
 
-  }, []);
+  }, [url]); // Include sortBy in dependency array
+
+  const handleSortChange = (sortByValue) => {
+    setSortBy(sortByValue);
+  };
 
   return (
     <>
       <Navigation />
-      <div className="container mx-auto mt-8 bg-gray-300 p-4">
-        <h2 className="text-2xl mb-4">Wel come to BisleriumBlog</h2>
+      <div className="container mx-auto bg-gray-300 p-4">
+        <h2 className="text-2xl mb-4">Welcome to BisleriumBlog</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Sort By:</h3>
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => handleSortChange(e.target.value)}
+              className="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+            >
+              <option value="recency">Recency</option>
+              <option value="popularity">Popularity</option>
+              <option value="random">Random</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.293 11.293a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L10 12.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
         <div className="flex flex-wrap justify-center gap-8">
           {loading && <Loader />}
           {blogs.length > 0 ? (
             blogs.map((blog, index) => (
-              <div key={index} className="bg-white shadow-md rounded-md p-4 mb-4 mr-4 w-80 h-full" onClick={()=>{handleCardClick(blog.id)}}>
+              <div
+                key={index}
+                className="bg-white shadow-md rounded-md p-4 mb-4 mr-4 w-80 h-full"
+                onClick={() => {
+                  handleCardClick(blog.id);
+                }}
+              >
                 {/* <img src={blog.image} alt="Image" className="w-full mb-4 rounded-lg" /> */}
                 <img
                   class="object-cover object-center w-full h-full"
@@ -49,7 +89,9 @@ const Home = () => {
                   <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
                   <p className="text-gray-700 ">{blog.body}</p>
                   <p className="text-gray-600">User ID: {blog.userId}</p>
-                  <p className="text-gray-600">Last Updated: {new Date(blog.updatedAt).toLocaleString()}</p>
+                  <p className="text-gray-600">
+                    Last Updated: {new Date(blog.updatedAt).toLocaleString()}
+                  </p>
                 </div>
               </div>
             ))

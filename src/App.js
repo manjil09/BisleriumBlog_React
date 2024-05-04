@@ -20,7 +20,7 @@ function App() {
         <Route path="/createBlog" element={<CreateBlog />}></Route>
         <Route path="/blogView/:id" element={<BlogView />}></Route>
         <Route path="/myBlog" element={<BlogView />}></Route>
-        <Route path="/profilePage" element={<ProfilePage />}></Route>
+        <Route path="/profile" element={<ProfilePage />}></Route>
 
         {/* <Route path ="/ " element={<AdminDashboard/>}></Route> */}
 

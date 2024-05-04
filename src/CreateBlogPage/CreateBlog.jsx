@@ -7,7 +7,7 @@ const CreateBlog = () => {
   const [body, setBody] = useState('');
   const [image, setImage] = useState('');
   const [userId, setUserId] = useState('');
-  const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJleHAiOjE3MTQ1Nzk1MDAsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzEvIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8ifQ.qvNk7tKuh2Mwp_gMB7Qj1ZcYX8YeOKS4dXjGJ5hdpAE'; // Replace 'your_auth_token_here' with your actual authentication token
+  const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJleHAiOjE3MTQ2MTc3ODgsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzEvIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8ifQ.n9Wo4GmY-dtYWLZzgwZUqKeG7PmzQs47YNonaKjzb08'; // Replace 'your_auth_token_here' with your actual authentication token
 
 
   const handleSubmit = async (e) => {
@@ -28,7 +28,7 @@ const CreateBlog = () => {
           }
         }
       );
-  
+
       console.log('Blog post created successfully:', response.data);
       // Optionally, you can redirect the user to another page or perform any other action upon successful creation of the blog post.
     } catch (error) {

@@ -2,10 +2,10 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 const navigation = [
-    { name: 'Dashboard', href: '', current: true },
-    { name: 'Home', href: '/blogView', current: true },
+    { name: 'Home', href: '/home', current: true },
     { name: 'Blog Create', href: '/createBlog', current: true },
-    { name: 'history', href: '#', current: true },
+    { name: ' My Blog ', href: '/myBlog', current: true },
+
   ]
   
   function classNames(...classes) {
@@ -99,22 +99,13 @@ const navigation = [
                             </a>
                           )}
                         </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                            >
-                              Settings
-                            </a>
-                          )}
-                        </Menu.Item>
+                    
                         <Menu.Item>
                           {({ active }) => (
                             <a
                               href="/login"
-                              className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                            >
+                              className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm', active ? 'text-red-500' : 'text-gray-700')}
+                              >
                               Log out
                             </a>
                           )}

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
+import Loader from '../componts/Loader/Loader';
+
 
 
 const BlogView = () => {
@@ -12,6 +14,8 @@ const BlogView = () => {
       try {
         const response = await axios.get('https://localhost:7271/api/blog/getAll');
         setBlogs(response.data.result.blogs);
+        console.log('message:', response.data.result.blogs);
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching blog data:', error);
@@ -54,9 +58,10 @@ const BlogView = () => {
       <Navigation />
       <div className="container mx-auto mt-8">
         <h2 className="text-2xl mb-4">Blog View</h2>
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
+        <div>
+              {loading && <Loader/>}
+              
+            </div>
           <div>
             {blogs.length > 0 ? (
               blogs.map((blog, index) => (
@@ -98,7 +103,7 @@ const BlogView = () => {
               <p>No blogs found.</p>
             )}
           </div>
-        )}
+        
       </div>
     </>
   );

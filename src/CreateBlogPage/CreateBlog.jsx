@@ -5,26 +5,32 @@ import Navigation from '../NavBar/Navigation';
 const CreateBlog = () => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState(null); // Change to null
   const [userId, setUserId] = useState('');
-  const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJleHAiOjE3MTQ2MTc3ODgsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzEvIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8ifQ.n9Wo4GmY-dtYWLZzgwZUqKeG7PmzQs47YNonaKjzb08'; // Replace 'your_auth_token_here' with your actual authentication token
+  const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiN2FhMDQwMmQtMmRhOC00MmVhLWE2OTQtMjUzZDQ4MGVhMGM5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTcxNDkyMDYwNiwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MjcxLyJ9.dNAf0PJ7EnJmoHZGVoY0fiGAhCC-DfBZkBAtGgtRxx0'; // Replace 'your_auth_token_here' with your actual authentication token
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('body', body);
+      formData.append('image', image); // Append image to formData
+      formData.append('userId', userId);
+
       const response = await axios.post(
         'https://localhost:7271/api/blog/add',
-        {
-          title,
-          body,
-          image,
-          userId
-        },
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${authToken}`
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'multipart/form-data' // Set content type to multipart/form-data for file upload
           }
         }
       );
@@ -60,8 +66,8 @@ const CreateBlog = () => {
           <textarea value={body} onChange={(e) => setBody(e.target.value)} required className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Image URL:</label>
-          <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+          <label className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
+          <input type="file" onChange={(e) => handleImageUpload(e)} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
         </div>
         <div className="mb-6">
           <label className="block text-gray-700 text-sm font-bold mb-2">User ID:</label>

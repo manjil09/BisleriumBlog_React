@@ -8,7 +8,6 @@ import Navigation from './NavBar/Navigation';
 import ProfilePage from './ProfilePage/ProfilePage ';
 import Home from './HomePage/Home';
 
-
 function App() {
   return (
     <BrowserRouter>

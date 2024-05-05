@@ -3,13 +3,16 @@ import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import Loader from '../componts/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
+import Pagination from '../componts/Pagination';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('recency'); // Default sort by recency
-  const url = `https://localhost:7271/api/blog/getAll?sortBy=${sortBy}`;
-  let navigate = useNavigate();
+  const [pageIndex, setPageIndex] = useState(1);
+  const [totalPages, setTotalPage] = useState(1);
+  const url = `https://localhost:7271/api/blog/getAll?pageIndex=${pageIndex}&sortBy=${sortBy}`;
+  let navigate = useNavigate()
 
   const handleCardClick = (index) => {
     let path = `/blogView/${index}`;
@@ -21,6 +24,7 @@ const Home = () => {
       try {
         const response = await axios.get(url);
         setBlogs(response.data.result.blogs);
+        setTotalPage(response.data.result.totalPages);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching blog data:', error);
@@ -36,6 +40,19 @@ const Home = () => {
     setSortBy(sortByValue);
   };
 
+  const handlePagination = (pageIndex) => {
+    setPageIndex(pageIndex);
+  }
+
+  const prevPage = () => {
+    if (pageIndex === 1) return;
+    setPageIndex(pageIndex - 1);
+  };
+
+  const nextPage = () => {
+    if (pageIndex === totalPages) return;
+    setPageIndex(pageIndex + 1);
+  };
   return (
     <>
       <Navigation />
@@ -98,6 +115,22 @@ const Home = () => {
           ) : (
             <p>No blogs found.</p>
           )}
+        </div>
+        {/* Pagination */}
+        <div className="flex justify-center mt-4">
+          {[...Array(totalPages).keys()].map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePagination(page + 1)}
+              className={`px-4 py-2 mx-1 rounded-lg ${pageIndex === page + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-700 hover:bg-gray-400'}`}
+            >
+              {page + 1}
+            </button>
+          ))}
+        </div>
+        <div>
+          {/* error when using pagination component */}
+          {/* <Pagination active={pageIndex} setActive={setPageIndex} prev={prevPage} next={nextPage} totalPages={totalPages} /> */}
         </div>
       </div>
     </>

@@ -22,12 +22,6 @@ function App() {
         <Route path="/profile" element={<ProfilePage />}></Route>
 
         {/* <Route path ="/ " element={<AdminDashboard/>}></Route> */}
-
-
-
-
-
-
       </Routes>
     </BrowserRouter>
 

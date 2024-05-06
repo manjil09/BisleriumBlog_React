@@ -59,16 +59,17 @@ function MyBlog() {
   };
 
   // Function to handle image selection
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setUpdatedImage(reader.result);
-    };
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setUpdatedImage(reader.result); // Set updated image state
   };
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+};
+
 
   return (
     <>
@@ -81,16 +82,17 @@ function MyBlog() {
           <div className="space-y-6">
             {blogPosts.map(post => (
               <div key={post.id} className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col md:flex-row items-center">
-                {/* <img
+                <img
                   className="object-cover object-center w-full h-full md:w-64 md:h-64"
-                  src={post.imageUrl}
+                  src={updatedImage || post.imageUrl} // Use updatedImage if available, otherwise use post.imageUrl
                   alt="Blog image"
-                /> */}
-                 <img
+                />
+              
+                 {/* <img
                   className="object-cover object-center w-full h-full md:w-64 md:h-64"
                   src="https://images.unsplash.com/photo-1682407186023-12c70a4a35e0?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=2832&amp;q=80"
                   alt="nature image"
-                />
+                /> */}
                 <div className="p-4">
                   <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
                   <p className="text-gray-700 mb-4">{post.body}</p>

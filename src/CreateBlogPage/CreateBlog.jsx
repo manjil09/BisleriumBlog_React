@@ -41,7 +41,7 @@ const CreateBlog = () => {
       );
 
       console.log('Blog post created successfully:', response.data);
-      window.location.href = '/blogView/:id'; 
+      window.location.href = '/myBlog'; 
 
       // Optionally, you can redirect the user to another page or perform any other action upon successful creation of the blog post.
     } catch (error) {

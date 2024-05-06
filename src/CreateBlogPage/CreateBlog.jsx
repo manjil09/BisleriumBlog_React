@@ -7,7 +7,9 @@ const CreateBlog = () => {
   const [body, setBody] = useState('');
   const [image, setImage] = useState(null); // Change to null
   const [userId, setUserId] = useState('');
-  const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiN2FhMDQwMmQtMmRhOC00MmVhLWE2OTQtMjUzZDQ4MGVhMGM5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTcxNDkyMDYwNiwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MjcxLyJ9.dNAf0PJ7EnJmoHZGVoY0fiGAhCC-DfBZkBAtGgtRxx0'; // Replace 'your_auth_token_here' with your actual authentication token
+  const authToken = JSON.parse(localStorage.getItem('authToken'));
+
+  // const authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiN2FhMDQwMmQtMmRhOC00MmVhLWE2OTQtMjUzZDQ4MGVhMGM5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTcxNDkyMDYwNiwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MjcxLyJ9.dNAf0PJ7EnJmoHZGVoY0fiGAhCC-DfBZkBAtGgtRxx0'; // Replace 'your_auth_token_here' with your actual authentication token
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];

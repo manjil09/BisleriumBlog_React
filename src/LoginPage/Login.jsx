@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import Loader from '../componts/Loader/Loader';
 
-
-
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-
-
 
     const handleUsernameChange = (e) => {
         setUsername(e.target.value);
@@ -31,12 +27,15 @@ const Login = () => {
             });
 
             if (response.ok) {
-                console.log('Login successful' ,);
-                setLoading(true)
-
-                // Redirect user or perform other actions upon successful login
+                console.log('User Login successful!');
+                const data = await response.json();
+                console.log('Token:', data.result); // Log token data to console
+                localStorage.setItem('token', JSON.stringify(data)); // Save token to local storage
+                
+                setLoading(true);
+                // Redirect user to home page
+                window.location.href = '/'; 
             } else {
-
                 console.error('Login failed');
                 // Handle login failure, e.g., display error message
             }
@@ -54,8 +53,7 @@ const Login = () => {
                 </h2>
             </div>
             <div>
-              {loading && <Loader/>}
-              
+                {loading && <Loader />}
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -112,7 +110,7 @@ const Login = () => {
                         <button
                             type="submit"
                             onClick={handleSubmit}
-                            href ="/navbar"
+                            href ="/"
                             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                             Login

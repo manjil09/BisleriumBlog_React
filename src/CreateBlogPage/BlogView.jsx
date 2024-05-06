@@ -10,8 +10,23 @@ const BlogView = () => {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiN2FhMDQwMmQtMmRhOC00MmVhLWE2OTQtMjUzZDQ4MGVhMGM5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTcxNDg3NzQ4MSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MjcxLyJ9.Tmy6W1bus5OoOB6zbnI3UXFYVnm-47piJGjmzUNnG6A'; // Replace 'your_auth_token_here' with your actual authentication token
+  const token = JSON.parse(localStorage.getItem('authToken'));
 
+
+  // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiN2FhMDQwMmQtMmRhOC00MmVhLWE2OTQtMjUzZDQ4MGVhMGM5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTcxNDg3NzQ4MSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MjcxLyJ9.Tmy6W1bus5OoOB6zbnI3UXFYVnm-47piJGjmzUNnG6A'; // Replace 'your_auth_token_here' with your actual authentication token
+ // Function to get user data from token
+    const getUserDataFromToken = () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = JSON.parse(token);
+            const userId = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+            const name = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+            const role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+            return { userId, name, role };
+        } else {
+            return null;
+        }
+    };
 
   useEffect(() => {
     const fetchData = async () => {

@@ -3,7 +3,10 @@ import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import Loader from '../componts/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
+// import getUserDataFromToken from './tokenUtils.js';
+
 import Pagination from '../componts/Pagination';
+import getUserDataFromToken from '../tokenUtils';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -53,6 +56,8 @@ const Home = () => {
     if (pageIndex === totalPages) return;
     setPageIndex(pageIndex + 1);
   };
+
+
   return (
     <>
       <Navigation />
@@ -95,6 +100,7 @@ const Home = () => {
                 onClick={() => {
                   handleCardClick(blog.id);
                 }}
+                
               >
                 {/* <img src={blog.image} alt="Image" className="w-full mb-4 rounded-lg" /> */}
                 <img

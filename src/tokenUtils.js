@@ -1,14 +1,25 @@
+import { jwtDecode } from "jwt-decode";
+
+
 const getUserDataFromToken = () => {
     try {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const decodedToken = JSON.parse(token);
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+            const token = JSON.parse(storedToken);
+            console.log('Decoded Token:', token); 
+            // Log decoded token to check its structure
+            const decodedToken = jwtDecode(token); // Decode the token
             console.log('Decoded Token:', decodedToken); // Log decoded token to check its structure
-
-            const userId = decodedToken?.id;
-            const name = decodedToken?.username;
-            const role = decodedToken?.role;
-            return { userId, name, role };
+        
+            if (decodedToken) {
+                const userId = decodedToken.id;
+                const name = decodedToken.username;
+                const role = decodedToken.role;
+                return { userId, name, role };
+            } else {
+                console.error('Failed to decode token');
+                // Handle token decoding failure
+            }
         } else {
             return null;
         }
@@ -20,13 +31,4 @@ const getUserDataFromToken = () => {
 export default getUserDataFromToken;
 
 
-  // Now you can use getUserDataFromToken wherever needed
-  const userData = getUserDataFromToken();
-  console.log('Token:', localStorage.getItem('token'));
-  if (userData) {
-    console.log('User ID:', userData.userId);
-    console.log('Name:', userData.name);
-    console.log('Role:', userData.role);
-  } else {
-    console.log('Token not found in local storage');
-  }
+  

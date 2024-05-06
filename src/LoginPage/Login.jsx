@@ -29,8 +29,9 @@ const Login = () => {
             if (response.ok) {
                 console.log('User Login successful!');
                 const data = await response.json();
-                console.log('Token:', data.result); // Log token data to console
-                localStorage.setItem('token', JSON.stringify(data)); // Save token to local storage
+                const token = data.result;
+                console.log('Token:', token); // Log token data to console
+                localStorage.setItem('token', JSON.stringify(token)); // Save token to local storage
                 
                 setLoading(true);
                 // Redirect user to home page

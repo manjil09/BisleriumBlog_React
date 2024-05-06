@@ -3,6 +3,7 @@ import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import { useParams } from 'react-router-dom';
 import Loader from '../componts/Loader/Loader';
+import getUserDataFromToken from '../tokenUtils';
 
 const BlogView = () => {
   const { id } = useParams();
@@ -10,32 +11,18 @@ const BlogView = () => {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
-  const token = JSON.parse(localStorage.getItem('authToken'));
+  const authToken = JSON.parse(localStorage.getItem('token'));
+  const userData = getUserDataFromToken();
 
-
-  // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUmFtdSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiN2FhMDQwMmQtMmRhOC00MmVhLWE2OTQtMjUzZDQ4MGVhMGM5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTcxNDg3NzQ4MSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3MS8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MjcxLyJ9.Tmy6W1bus5OoOB6zbnI3UXFYVnm-47piJGjmzUNnG6A'; // Replace 'your_auth_token_here' with your actual authentication token
- // Function to get user data from token
-    const getUserDataFromToken = () => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const decodedToken = JSON.parse(token);
-            const userId = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
-            const name = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-            const role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-            return { userId, name, role };
-        } else {
-            return null;
-        }
-    };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`https://localhost:7271/api/blog/getById/${id}`);
         setBlog(response.data.result);
-        setLoading(false);
+        // setLoading(true);
         // Fetch comments for the blog
-        const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getByBlogId/${id}`);
+        const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
         setComments(commentsResponse.data.result);
       } catch (error) {
         console.error('Error fetching blog data:', error);
@@ -61,12 +48,13 @@ const BlogView = () => {
         'https://localhost:7271/api/comment/add',
         {
           blogId: id,
-          comment: commentText
+          comment: commentText,
+          userId:userData.id
         },
         {
           headers: {
             'Content-Type': 'application/json', // Specify the content type of the request body
-            'Authorization': `Bearer ${token}`// Include any authorization token if required
+            'Authorization': `Bearer ${authToken}`// Include any authorization token if required
           }
         }
       );
@@ -85,13 +73,12 @@ const BlogView = () => {
       <Navigation />
       <div className="container mx-auto mt-8">
         <h2 className="text-2xl mb-4">Blog View</h2>
-        {loading && <Loader />}
+        {/* {loading && <Loader />} */}
         {blog && (
           <div className="bg-gray shadow-md rounded-md p-6 mb-6">
             <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
             <p className="text-gray-700 mb-4">{blog.body}</p>
-            <img src={blog.image} alt="Image" className="w-full mb-4 rounded-lg" />
-            <p className="text-gray-600">User ID: {blog.userId}</p>
+            <img src={blog.imageUrl} alt="Image" className="w-full mb-4 rounded-lg" />
             <p className="text-gray-600">Last Updated: {new Date(blog.updatedAt).toLocaleString()}</p>
             <div className="flex justify-between items-center mt-4">
               <div>
@@ -116,9 +103,12 @@ const BlogView = () => {
               </div>
             </div>
             <ul className="mt-4">
-              {comments.map((comment, index) => (
+              {comments!=null?(comments.map((comment, index) => (
                 <li key={index} className="text-gray-600">{comment}</li>
-              ))}
+              ))):(
+            <p>No Comments found.</p>
+                
+              )}
             </ul>
           </div>
         )}

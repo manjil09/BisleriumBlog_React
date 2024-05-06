@@ -7,6 +7,10 @@ import BlogView from './CreateBlogPage/BlogView';
 import Navigation from './NavBar/Navigation';
 import ProfilePage from './ProfilePage/ProfilePage ';
 import Home from './HomePage/Home';
+import MyBlog from './MyBlogsPage/MyBlog';
+
+
+
 
 function App() {
   return (
@@ -18,7 +22,7 @@ function App() {
         <Route path="/" element={<Home />}></Route>
         <Route path="/createBlog" element={<CreateBlog />}></Route>
         <Route path="/blogView/:id" element={<BlogView />}></Route>
-        <Route path="/myBlog" element={<BlogView />}></Route>
+        <Route path="/myBlog" element={<MyBlog />}></Route>
         <Route path="/profile" element={<ProfilePage />}></Route>
 
         {/* <Route path ="/ " element={<AdminDashboard/>}></Route> */}

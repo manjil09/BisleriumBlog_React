@@ -5,7 +5,6 @@ import Loader from '../componts/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
 // import getUserDataFromToken from './tokenUtils.js';
 
-import Pagination from '../componts/Pagination';
 import getUserDataFromToken from '../tokenUtils';
 
 const Home = () => {
@@ -57,6 +56,15 @@ const Home = () => {
     setPageIndex(pageIndex + 1);
   };
 
+  // Now you can use getUserDataFromToken wherever needed
+  const userData = getUserDataFromToken();
+  if (userData) {
+    console.log('User ID:', userData.userId);
+    console.log('Name:', userData.name);
+    console.log('Role:', userData.role);
+  } else {
+    console.log('Token not found in local storage');
+  }
 
   return (
     <>
@@ -111,7 +119,6 @@ const Home = () => {
                 <div className="ml-2">
                   <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
                   <p className="text-gray-700 ">{blog.body}</p>
-                  <p className="text-gray-600">User ID: {blog.userId}</p>
                   <p className="text-gray-600">
                     Last Updated: {new Date(blog.updatedAt).toLocaleString()}
                   </p>
@@ -122,7 +129,6 @@ const Home = () => {
             <p>No blogs found.</p>
           )}
         </div>
-        {/* Pagination */}
         <div className="flex justify-center mt-4">
           {[...Array(totalPages).keys()].map((page) => (
             <button
@@ -135,8 +141,6 @@ const Home = () => {
           ))}
         </div>
         <div>
-          {/* error when using pagination component */}
-          {/* <Pagination active={pageIndex} setActive={setPageIndex} prev={prevPage} next={nextPage} totalPages={totalPages} /> */}
         </div>
       </div>
     </>

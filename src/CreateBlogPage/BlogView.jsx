@@ -13,12 +13,12 @@ const BlogView = () => {
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState([]);
-  const [commentsCount, setCommentsCount] = useState(0);
+  const [commentsData, setCommentsData] = useState({ totalPages: 0, comments: [] });
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const authToken = JSON.parse(localStorage.getItem('token'));
   const userData = getUserDataFromToken();
+  const userId = userData.userId;
   const [openLoginDialogue, setOpenLoginDialogue] = useState(false);
   const headers = {
     'Content-Type': 'application/json',
@@ -29,13 +29,12 @@ const BlogView = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`https://localhost:7271/api/blog/getById/${id}`);
-        let result = response.data.result
-        setBlog(result);
-        setLikes(result.totalUpvotes);
-        setDislikes(result.totalDownvotes);
-        setCommentsCount(result.totalComments);
+        const blogData = response.data.result;
+        setBlog(blogData);
+        setLikes(blogData.totalUpvotes);
+        setDislikes(blogData.totalDownvotes);
         const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
-        setComments(commentsResponse.data.result);
+        setCommentsData(commentsResponse.data.result);
       } catch (error) {
         console.error('Error fetching blog data:', error);
         setLoading(false);
@@ -94,12 +93,15 @@ const BlogView = () => {
         {
           blogId: id,
           body: commentText,
-          userId: userData.userId
+          userId: userId
         },
         { headers: headers }
       );
       // Update comments state to reflect the new comment
-      setComments(prevComments => [...prevComments, response.data.result]);
+      setCommentsData(prevCommentsData => ({
+        totalPages: prevCommentsData.totalPages,
+        comments: [...prevCommentsData.comments, response.data.result]
+      }));
       setCommentText('');
     } catch (error) {
       console.error('Error adding comment:', error);
@@ -130,7 +132,7 @@ const BlogView = () => {
                   <span>{dislikes}</span>
                 </div>
               </div>
-              <LoginDialogue open={openLoginDialogue} setOpen={() => setOpenLoginDialogue(false)}></LoginDialogue>
+              <LoginDialogue open={openLoginDialogue} setOpen={() => setOpenLoginDialogue(false)} />
               <div>
                 <input
                   type="text"
@@ -145,13 +147,16 @@ const BlogView = () => {
               </div>
             </div>
             <ul className="mt-4">
-              {/* {comments != null ? (comments.map((comment, index) => (
-                <li key={index} className="text-gray-600">{comment}</li>
-              ))) : (
-                <p>No Comments found.</p>
-
-              )}
-            </ul>
+            {commentsData && commentsData.comments.length > 0 ? (
+              commentsData.comments.map((comment, index) => (
+                <li key={index} className="text-gray-600">
+                  <strong>{comment.userName}:</strong> {comment.body}
+                </li>
+              ))
+            ) : (
+              <p>No Comments found.</p>
+            )}
+          </ul>
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import { useParams } from 'react-router-dom';
-import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { FaThumbsUp, FaThumbsDown, FaEdit, FaTrash } from 'react-icons/fa';
 import Loader from '../components/Loader/Loader';
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
@@ -16,6 +16,8 @@ const BlogView = () => {
   const [commentsData, setCommentsData] = useState({ totalPages: 0, comments: [] });
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editedCommentText, setEditedCommentText] = useState('');
   const authToken = JSON.parse(localStorage.getItem('token'));
   const userData = getUserDataFromToken();
   const userId = userData.userId;
@@ -108,6 +110,37 @@ const BlogView = () => {
     }
   };
 
+  const handleUpdateComment = async (commentId) => {
+    try {
+      await axios.put(
+        `https://localhost:7271/api/comment/update/${commentId}`,
+        { body: editedCommentText },
+        { headers: headers }
+      );
+      // Fetch comments again to update the UI
+      const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
+      setCommentsData(commentsResponse.data.result);
+      setEditingCommentId(null);
+      setEditedCommentText('');
+    } catch (error) {
+      console.error('Error updating comment:', error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axios.delete(
+        `https://localhost:7271/api/comment/delete/${commentId}`,
+        { headers: headers }
+      );
+      // Fetch comments again to update the UI
+      const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
+      setCommentsData(commentsResponse.data.result);
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
   return (
     <>
       <Navigation />
@@ -150,7 +183,33 @@ const BlogView = () => {
             {commentsData && commentsData.comments.length > 0 ? (
               commentsData.comments.map((comment, index) => (
                 <li key={index} className="text-gray-600">
-                  <strong>{comment.userName}:</strong> {comment.body}
+                  <strong>{comment.userName}:</strong> {comment.id === editingCommentId ? (
+                    <>
+                      <input
+                        type="text"
+                        value={editedCommentText}
+                        onChange={(e) => setEditedCommentText(e.target.value)}
+                        className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
+                      />
+                      <button onClick={() => handleUpdateComment(comment.id)} className="ml-2 bg-blue-500 text-white px-2 py-1 rounded-md">
+                        Update
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {comment.body}
+                      {comment.userId === userId && (
+                        <>
+                          <button onClick={() => {setEditingCommentId(comment.id); setEditedCommentText(comment.body);}} className="ml-2 text-blue-500">
+                            <FaEdit />
+                          </button>
+                          <button onClick={() => handleDeleteComment(comment.id)} className="ml-2 text-red-500">
+                            <FaTrash />
+                          </button>
+                        </>
+                      )}
+                    </>
+                  )}
                 </li>
               ))
             ) : (

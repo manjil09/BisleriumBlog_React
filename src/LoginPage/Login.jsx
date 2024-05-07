@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Loader from '../components/Loader/Loader';
+import LoginMessage from '../components/LoginMessage'; // Import the LoginMessage component
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [loginMessage, setLoginMessage] = useState({ message: '', isSuccess: false }); // State for login message
 
     const handleUsernameChange = (e) => {
         setUsername(e.target.value);
@@ -34,14 +36,17 @@ const Login = () => {
                 localStorage.setItem('token', JSON.stringify(token)); // Save token to local storage
 
                 setLoading(true);
+                setLoginMessage({ message: 'Login successful!', isSuccess: true }); // Set success message
                 // Redirect user to home page
                 window.location.href = '/';
             } else {
                 console.error('Login failed');
+                setLoginMessage({ message: 'Login failed. Please try again.', isSuccess: false }); // Set failure message
                 // Handle login failure, e.g., display error message
             }
         } catch (error) {
             console.error('An error occurred:', error);
+            setLoginMessage({ message: 'An error occurred. Please try again later.', isSuccess: false }); // Set failure message
             // Handle network errors or other exceptions
         }
     };
@@ -58,6 +63,11 @@ const Login = () => {
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                {/* Render login message component */}
+                {loginMessage.message && (
+                    <LoginMessage message={loginMessage.message} isSuccess={loginMessage.isSuccess} />
+                )}
+
                 <form className="space-y-6" action="#" method="POST">
                     <div>
                         <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
@@ -73,7 +83,7 @@ const Login = () => {
                                 autoComplete="username"
                                 placeholder=' Enter Username'
                                 required
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                className="block w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
@@ -95,12 +105,12 @@ const Login = () => {
                                 autoComplete="current-password"
                                 placeholder=' Enter Password'
                                 required
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                className="block w-full rounded-md border-0 py-1.5 pl-4 pr-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                         </div>
                         <br></br>
 
-                        <div className="text-sm">
+                        <div className="text-sm ">
                             <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
                                 Forgot password?
                             </a>

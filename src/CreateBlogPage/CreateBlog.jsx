@@ -9,7 +9,7 @@ const CreateBlog = () => {
   const [body, setBody] = useState('');
   const [image, setImage] = useState(null); // Change to null
   const authToken = JSON.parse(localStorage.getItem('token'));
-  
+
    // Now you can use getUserDataFromToken wherever needed
    const userData = getUserDataFromToken();
    console.log("messageToken" ,authToken)
@@ -58,9 +58,6 @@ const CreateBlog = () => {
   };
 
   return (
-    <>
-      <Navigation/>
-      <div className="flex">
         <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-xl">
           <h2 className="text-2xl mb-4">Create a New Blog Post</h2>
           <form>
@@ -79,15 +76,7 @@ const CreateBlog = () => {
             <button type="submit" onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create Post</button>
           </form>
         </div>
-        <div className="hidden lg:block w-1/2 p-6">
-          <img
-            className="object-cover object-center w-full h-full"
-            src="https://images.unsplash.com/photo-1682407186023-12c70a4a35e0?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=2832&amp;q=80"
-            alt="nature image"
-          />
-        </div>
-      </div>
-    </>
+        
   );
 };
 

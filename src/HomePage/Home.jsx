@@ -70,22 +70,20 @@ const Home = () => {
       <Navigation />
       <div className="container mx-auto bg-gray-300 p-4">
         <h2 className="text-2xl mb-4">Welcome to BisleriumBlog</h2>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Sort By:</h3>
-          <div className="relative">
-            <select
-              value={sortBy}
-              onChange={(e) => handleSortChange(e.target.value)}
-              className=" hover:border-gray-500 px-2 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-            >
-              <option value="recency">Recency</option>
-              <option value="popularity">Popularity</option>
-              <option value="random">Random</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-            </div>
-          </div>
-        </div>
+  
+        <div className="relative flex justify-end items-center">
+        <h3 className="text-lg font-semibold mr-2">Sort By:</h3>
+        <select
+          value={sortBy}
+          onChange={(e) => handleSortChange(e.target.value)}
+          className="hover:border-gray-500 px-2 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+        >
+          <option value="recency">Recent</option>
+          <option value="popularity">Popularity</option>
+          <option value="random">Random</option>
+        </select>
+       </div>
+      
         <div className="flex flex-wrap justify-center gap-8">
           {loading && <Loader />}
           {blogs.length > 0 ? (
@@ -98,7 +96,7 @@ const Home = () => {
                 }}
                 
               >
-                <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full mb-4 rounded-lg" />
+                <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full h-64 mb-4 rounded-lg" />
 
                
                 <div className="ml-2">

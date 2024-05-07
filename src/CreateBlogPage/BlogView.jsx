@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import { useParams } from 'react-router-dom';
+import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa'; // Import icons for like and dislike
 import Loader from '../componts/Loader/Loader';
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
@@ -13,9 +14,11 @@ const BlogView = () => {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
+  const [likes, setLikes] = useState(0); // State for likes count
+  const [dislikes, setDislikes] = useState(0); // State for dislikes count
   const authToken = JSON.parse(localStorage.getItem('token'));
   const userData = getUserDataFromToken();
-
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,14 +39,14 @@ const BlogView = () => {
   }, [id]);
 
   const handleUpvote = () => {
-    // Upvoting logic
+    setLikes(likes + 1); // Increment likes count
   };
 
   const handleDownvote = () => {
-    // Downvoting logic
+    setDislikes(dislikes + 1); // Increment dislikes count
   };
 
-  const handleComment = async () => {
+  const handleComment = async (id) => {
     try {
       // Make a POST request to add a comment
       const response = await axios.post(
@@ -51,7 +54,7 @@ const BlogView = () => {
         {
           blogId: id,
           comment: commentText,
-          userId:userData.id
+          userId: userData.id
         },
         {
           headers: {
@@ -69,7 +72,6 @@ const BlogView = () => {
     }
   };
   
-
   return (
     <>
       <Navigation />
@@ -79,20 +81,24 @@ const BlogView = () => {
         {blog && (
           <div className="bg-gray shadow-md rounded-md p-6 mb-6">
             <div className="w-30 h-30">
-            <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image"  />
+            <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full h-64 mb-4 rounded-lg" />
             </div>
             <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
             <p className="text-gray-700 mb-4">{blog.body}</p>
             <p className="text-gray-600">Blog Post Date: {new Date(blog.updatedAt).toLocaleString()}</p>
             <div className="flex justify-between items-center mt-4">
-              <div>
-                <button onClick={handleUpvote} className="bg-green-500 text-white px-4 py-2 rounded-lg mr-4">
-                  Upvote
-                </button>
-                <button onClick={handleDownvote} className="bg-red-500 text-white px-4 py-2 rounded-lg">
-                  Downvote
-                </button>
-              </div>
+            <div className="flex items-center mt-4">
+            <div className="flex items-center mr-4">
+              {/* Like button */}
+              <FaThumbsUp onClick={handleUpvote} className="cursor-pointer mr-1 hover:text-blue-500" /> {/* Like icon */}
+              <span>{likes}</span> {/* Display likes count */}
+            </div>
+            <div className="flex items-center">
+              {/* Dislike button */}
+              <FaThumbsDown onClick={handleDownvote} className="cursor-pointer mr-1 hover:text-red-500" /> {/* Dislike icon */}
+              <span>{dislikes}</span> {/* Display dislikes count */}
+            </div>
+          </div>
               <div>
                 <input
                   type="text"

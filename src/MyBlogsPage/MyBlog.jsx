@@ -14,7 +14,7 @@ function MyBlog() {
   const [editingBlog, setEditingBlog] = useState(null);
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedBody, setUpdatedBody] = useState('');
-  const [updatedImage, setUpdatedImage] = useState('');
+  const [updatedImage, setUpdatedImage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // State for controlling modal
 
@@ -43,16 +43,16 @@ function MyBlog() {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (id) => {
+    console.log(updatedTitle+"fhis aslkfj a owe osdfs")
     try {
+      const formData = new FormData();
+      formData.append('title', updatedTitle);
+      formData.append('body', updatedBody);
+      formData.append('Image', updatedImage); // Append image to formData
       const response = await axios.put(
-        `https://localhost:7271/api/blog/update/${userId}`,
-        {
-          title: updatedTitle,
-          body: updatedBody,
-          imageUrl: updatedImage,
-          userId: userId
-        }
+        `https://localhost:7271/api/blog/update/${id}`,
+        formData,{}
       );
       
       if (response.status === 200) {
@@ -61,7 +61,7 @@ function MyBlog() {
         setEditingBlog(null);
         setUpdatedTitle('');
         setUpdatedBody('');
-        setUpdatedImage('');
+        setUpdatedImage(null);
       } else {
         console.error('Failed to update blog post. Server responded with status:', response.status);
       }
@@ -78,14 +78,16 @@ function MyBlog() {
   
 
   const handleImageChange = (e) => {
+    // const file = e.target.files[0];
+    // const reader = new FileReader();
+    // reader.onloadend = () => {
+    //   setUpdatedImage(reader.result);
+    // };
+    // if (file) {
+    //   reader.readAsDataURL(file);
+    // }
     const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setUpdatedImage(reader.result);
-    };
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    setUpdatedImage(file);
   };
 
   const filteredBlogPosts = blogPosts.filter(post => {
@@ -127,7 +129,7 @@ function MyBlog() {
                 <img src={`${BAS_URL}/${post.imageUrl}`} alt="Blog Image" className="w-full h-64 object-cover" />
                 <div className="p-4">
                   <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                  <p className="text-gray-700 mb-4">{post.body}</p>
+                  <p className="text-gray-700 mb-4">{post.body}</p>``
                   <p className="text-sm text-gray-500">Blog Post Date: {moment(post.updatedAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
                   <div className="flex mt-4">
                     <button className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => setEditingBlog(post)}>Edit</button>

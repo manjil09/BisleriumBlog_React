@@ -33,6 +33,7 @@ const BlogView = () => {
       try {
         const response = await axios.get(`https://localhost:7271/api/blog/getById/${id}`);
         let result = response.data.result
+        
         setBlog(result);
         setLikes(result.totalUpvotes);
         setDislikes(result.totalDownvotes);
@@ -115,6 +116,7 @@ const BlogView = () => {
           headers: headers
         }
       );
+      console.log("api value"+response.data.result);
       // Update comments state to reflect the new comment
       setComments(prevComments => [...prevComments, response.data.result]);
       // Clear comment input field
@@ -166,12 +168,11 @@ const BlogView = () => {
               </div>
             </div>
             <ul className="mt-4">
-              {comments != null ? (comments.map((comment, index) => (
+              {/* {comments != null ? (comments.map((comment, index) => (
                 <li key={index} className="text-gray-600">{comment}</li>
               ))) : (
                 <p>No Comments found.</p>
-
-              )}
+              )} */}
             </ul>
           </div>
         )}

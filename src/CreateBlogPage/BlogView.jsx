@@ -23,6 +23,10 @@ const BlogView = () => {
 
   const [openLoginDialogue, setOpenLoginDialogue] = useState(false);
 
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${authToken}`
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,25 +50,26 @@ const BlogView = () => {
     fetchData();
   }, [id]);
 
-  const handleUpvote = async() => {
+  const handleUpvote = async () => {
     if (!userData) {
       // Prompt user to log in
       setOpenLoginDialogue(true);
       return;
     }
-    try {
-      const response = await axios.post(
-        `https://localhost:7271/api/blog/reaction/upvote?blogId=${id}&userId=${userData.id}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-          }
-        }
-      );
-    } catch (error) {
-      console.error('Error adding upvote:', error);
-    }
+    await axios.post(
+      `https://localhost:7271/api/blog/reaction/upvote?blogId=${id}&userId=${userData.userId}`,
+      {},
+      {
+        headers: headers
+      }
+    ).then(response => {
+      console.log('Upvote successful');
+      // Handle success if needed
+    })
+      .catch(error => {
+        console.error('Error upvoting:', error);
+        // Handle error if needed
+      });
     // setLikes(likes + 1); 
   };
 
@@ -74,23 +79,24 @@ const BlogView = () => {
       setOpenLoginDialogue(true);
       return;
     }
-    try {
-      const response = await axios.post(
-        `https://localhost:7271/api/blog/reaction/downvote?blogId=${id}&userId=${userData.id}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-          }
-        }
-      );
-    } catch (error) {
-      console.error('Error adding downvote:', error);
-    }
+    const response = await axios.post(
+      `https://localhost:7271/api/blog/reaction/downvote?blogId=${id}&userId=${userData.userId}`,
+      {},
+      {
+        headers: headers
+      }
+    ).then(response => {
+      console.log('Downvote successful');
+      // Handle success 
+    })
+      .catch(error => {
+        console.error('Error upvoting:', error);
+        // Handle error 
+      });
     // setDislikes(dislikes + 1); 
   };
 
-  const handleComment = async (id) => {
+  const handleComment = async () => {
     if (!userData) {
       // Prompt user to log in
       setOpenLoginDialogue(true);
@@ -102,14 +108,11 @@ const BlogView = () => {
         'https://localhost:7271/api/comment/add',
         {
           blogId: id,
-          comment: commentText,
-          userId: userData.id
+          body: commentText,
+          userId: userData.userId
         },
         {
-          headers: {
-            'Content-Type': 'application/json', // Specify the content type of the request body
-            'Authorization': `Bearer ${authToken}`// Include any authorization token if required
-          }
+          headers: headers
         }
       );
       // Update comments state to reflect the new comment

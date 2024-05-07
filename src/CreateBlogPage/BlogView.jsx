@@ -3,9 +3,10 @@ import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import { useParams } from 'react-router-dom';
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa'; // Import icons for like and dislike
-import Loader from '../componts/Loader/Loader';
+import Loader from '../components/Loader/Loader';
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
+import LoginDialogue from '../components/LoginDialogue';
 
 
 const BlogView = () => {
@@ -18,7 +19,9 @@ const BlogView = () => {
   const [dislikes, setDislikes] = useState(0); // State for dislikes count
   const authToken = JSON.parse(localStorage.getItem('token'));
   const userData = getUserDataFromToken();
-  
+
+  const [openLoginDialogue, setOpenLoginDialogue] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,14 +42,29 @@ const BlogView = () => {
   }, [id]);
 
   const handleUpvote = () => {
+    if (!userData) {
+      // Prompt user to log in
+      setOpenLoginDialogue(true);
+      return;
+    }
     setLikes(likes + 1); // Increment likes count
   };
 
   const handleDownvote = () => {
+    if (!userData) {
+      // Prompt user to log in
+      setOpenLoginDialogue(true);
+      return;
+    }
     setDislikes(dislikes + 1); // Increment dislikes count
   };
 
   const handleComment = async (id) => {
+    if (!userData) {
+      // Prompt user to log in
+      setOpenLoginDialogue(true);
+      return;
+    }
     try {
       // Make a POST request to add a comment
       const response = await axios.post(
@@ -71,7 +89,7 @@ const BlogView = () => {
       console.error('Error adding comment:', error);
     }
   };
-  
+
   return (
     <>
       <Navigation />
@@ -81,24 +99,25 @@ const BlogView = () => {
         {blog && (
           <div className="bg-gray shadow-md rounded-md p-6 mb-6">
             <div className="w-30 h-30">
-            <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full h-64 mb-4 rounded-lg" />
+              <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full h-64 mb-4 rounded-lg" />
             </div>
             <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
             <p className="text-gray-700 mb-4">{blog.body}</p>
             <p className="text-gray-600">Blog Post Date: {new Date(blog.updatedAt).toLocaleString()}</p>
             <div className="flex justify-between items-center mt-4">
-            <div className="flex items-center mt-4">
-            <div className="flex items-center mr-4">
-              {/* Like button */}
-              <FaThumbsUp onClick={handleUpvote} className="cursor-pointer mr-1 hover:text-blue-500" /> {/* Like icon */}
-              <span>{likes}</span> {/* Display likes count */}
-            </div>
-            <div className="flex items-center">
-              {/* Dislike button */}
-              <FaThumbsDown onClick={handleDownvote} className="cursor-pointer mr-1 hover:text-red-500" /> {/* Dislike icon */}
-              <span>{dislikes}</span> {/* Display dislikes count */}
-            </div>
-          </div>
+              <div className="flex items-center mt-4">
+                <div className="flex items-center mr-4">
+                  {/* Like button */}
+                  <FaThumbsUp onClick={handleUpvote} className="cursor-pointer mr-1 hover:text-blue-500" /> {/* Like icon */}
+                  <span>{likes}</span> {/* Display likes count */}
+                </div>
+                <div className="flex items-center">
+                  {/* Dislike button */}
+                  <FaThumbsDown onClick={handleDownvote} className="cursor-pointer mr-1 hover:text-red-500" /> {/* Dislike icon */}
+                  <span>{dislikes}</span> {/* Display dislikes count */}
+                </div>
+              </div>
+              <LoginDialogue open = {openLoginDialogue} setOpen = {()=>setOpenLoginDialogue(false)}></LoginDialogue>
               <div>
                 <input
                   type="text"
@@ -113,11 +132,11 @@ const BlogView = () => {
               </div>
             </div>
             <ul className="mt-4">
-              {comments!=null?(comments.map((comment, index) => (
+              {comments != null ? (comments.map((comment, index) => (
                 <li key={index} className="text-gray-600">{comment}</li>
-              ))):(
-            <p>No Comments found.</p>
-                
+              ))) : (
+                <p>No Comments found.</p>
+
               )}
             </ul>
           </div>

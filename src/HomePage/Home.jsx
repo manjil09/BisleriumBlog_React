@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
-import Loader from '../componts/Loader/Loader';
+import Loader from '../components/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
@@ -70,20 +70,20 @@ const Home = () => {
       <Navigation />
       <div className="container mx-auto bg-gray-300 p-4">
         <h2 className="text-2xl mb-4">Welcome to BisleriumBlog</h2>
-  
+
         <div className="relative flex justify-end items-center">
-        <h3 className="text-lg font-semibold mr-2">Sort By:</h3>
-        <select
-          value={sortBy}
-          onChange={(e) => handleSortChange(e.target.value)}
-          className="hover:border-gray-500 px-2 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-        >
-          <option value="recency">Recent</option>
-          <option value="popularity">Popularity</option>
-          <option value="random">Random</option>
-        </select>
-       </div>
-      
+          <h3 className="text-lg font-semibold mr-2">Sort By:</h3>
+          <select
+            value={sortBy}
+            onChange={(e) => handleSortChange(e.target.value)}
+            className="hover:border-gray-500 px-2 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+          >
+            <option value="recency">Recent</option>
+            <option value="popularity">Popularity</option>
+            <option value="random">Random</option>
+          </select>
+        </div>
+
         <div className="flex flex-wrap justify-center gap-8">
           {loading && <Loader />}
           {blogs.length > 0 ? (
@@ -94,11 +94,11 @@ const Home = () => {
                 onClick={() => {
                   handleCardClick(blog.id);
                 }}
-                
+
               >
                 <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full h-64 mb-4 rounded-lg" />
 
-               
+
                 <div className="ml-2">
                   <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
                   <p className="text-gray-700 ">{blog.body}</p>

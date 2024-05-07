@@ -15,6 +15,7 @@ const BlogView = () => {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
+  const [commentsCount, setCommentsCount] = useState(0);
   const [likes, setLikes] = useState(0); // State for likes count
   const [dislikes, setDislikes] = useState(0); // State for dislikes count
   const authToken = JSON.parse(localStorage.getItem('token'));
@@ -27,7 +28,11 @@ const BlogView = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`https://localhost:7271/api/blog/getById/${id}`);
-        setBlog(response.data.result);
+        let result = response.data.result
+        setBlog(result);
+        setLikes(result.totalUpvotes);
+        setDislikes(result.totalDownvotes);
+        setCommentsCount(result.totalComments);
         // setLoading(true);
         // Fetch comments for the blog
         const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
@@ -41,22 +46,48 @@ const BlogView = () => {
     fetchData();
   }, [id]);
 
-  const handleUpvote = () => {
+  const handleUpvote = async() => {
     if (!userData) {
       // Prompt user to log in
       setOpenLoginDialogue(true);
       return;
     }
-    setLikes(likes + 1); // Increment likes count
+    try {
+      const response = await axios.post(
+        `https://localhost:7271/api/blog/reaction/upvote?blogId=${id}&userId=${userData.id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        }
+      );
+    } catch (error) {
+      console.error('Error adding upvote:', error);
+    }
+    // setLikes(likes + 1); 
   };
 
-  const handleDownvote = () => {
+  const handleDownvote = async () => {
     if (!userData) {
       // Prompt user to log in
       setOpenLoginDialogue(true);
       return;
     }
-    setDislikes(dislikes + 1); // Increment dislikes count
+    try {
+      const response = await axios.post(
+        `https://localhost:7271/api/blog/reaction/downvote?blogId=${id}&userId=${userData.id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        }
+      );
+    } catch (error) {
+      console.error('Error adding downvote:', error);
+    }
+    // setDislikes(dislikes + 1); 
   };
 
   const handleComment = async (id) => {
@@ -117,7 +148,7 @@ const BlogView = () => {
                   <span>{dislikes}</span> {/* Display dislikes count */}
                 </div>
               </div>
-              <LoginDialogue open = {openLoginDialogue} setOpen = {()=>setOpenLoginDialogue(false)}></LoginDialogue>
+              <LoginDialogue open={openLoginDialogue} setOpen={() => setOpenLoginDialogue(false)}></LoginDialogue>
               <div>
                 <input
                   type="text"

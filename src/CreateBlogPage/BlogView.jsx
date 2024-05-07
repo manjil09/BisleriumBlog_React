@@ -19,6 +19,7 @@ const BlogView = () => {
   const [likes, setLikes] = useState(0); // State for likes count
   const [dislikes, setDislikes] = useState(0); // State for dislikes count
   const authToken = JSON.parse(localStorage.getItem('token'));
+
   const userData = getUserDataFromToken();
 
   const [openLoginDialogue, setOpenLoginDialogue] = useState(false);
@@ -42,11 +43,12 @@ const BlogView = () => {
         setLoading(false);
       }
     };
+    console.log('tokenMesage' ,authToken) 
 
     fetchData();
   }, [id]);
 
-  const handleUpvote = async() => {
+  const handleUpvote = async(id) => {
     if (!userData) {
       // Prompt user to log in
       setOpenLoginDialogue(true);
@@ -54,7 +56,7 @@ const BlogView = () => {
     }
     try {
       const response = await axios.post(
-        `https://localhost:7271/api/blog/reaction/upvote?blogId=${id}&userId=${userData.id}`,
+        `https://localhost:7271/api/blog/reaction/upvote?blogId=${id}&userId=${id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -79,8 +81,8 @@ const BlogView = () => {
         `https://localhost:7271/api/blog/reaction/downvote?blogId=${id}&userId=${userData.id}`,
         {
           headers: {
+            Authorization: `Bearer ${authToken}`,
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
           }
         }
       );

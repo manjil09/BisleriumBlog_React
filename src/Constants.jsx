@@ -1,0 +1,1 @@
+export const  BAS_URL ="https://localhost:7271/"

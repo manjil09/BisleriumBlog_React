@@ -4,6 +4,8 @@ import Navigation from '../NavBar/Navigation';
 import { useParams } from 'react-router-dom';
 import Loader from '../componts/Loader/Loader';
 import getUserDataFromToken from '../tokenUtils';
+import { BAS_URL } from '../Constants';
+
 
 const BlogView = () => {
   const { id } = useParams();
@@ -76,10 +78,12 @@ const BlogView = () => {
         {/* {loading && <Loader />} */}
         {blog && (
           <div className="bg-gray shadow-md rounded-md p-6 mb-6">
+            <div className="w-30 h-30">
+            <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image"  />
+            </div>
             <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
             <p className="text-gray-700 mb-4">{blog.body}</p>
-            <img src={blog.imageUrl} alt="Image" className="w-full mb-4 rounded-lg" />
-            <p className="text-gray-600">Last Updated: {new Date(blog.updatedAt).toLocaleString()}</p>
+            <p className="text-gray-600">Blog Post Date: {new Date(blog.updatedAt).toLocaleString()}</p>
             <div className="flex justify-between items-center mt-4">
               <div>
                 <button onClick={handleUpvote} className="bg-green-500 text-white px-4 py-2 rounded-lg mr-4">

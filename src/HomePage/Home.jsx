@@ -3,9 +3,8 @@ import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import Loader from '../componts/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
-// import getUserDataFromToken from './tokenUtils.js';
-
 import getUserDataFromToken from '../tokenUtils';
+import { BAS_URL } from '../Constants';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -77,24 +76,13 @@ const Home = () => {
             <select
               value={sortBy}
               onChange={(e) => handleSortChange(e.target.value)}
-              className="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+              className=" hover:border-gray-500 px-2 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
             >
               <option value="recency">Recency</option>
               <option value="popularity">Popularity</option>
               <option value="random">Random</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M7.293 11.293a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L10 12.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
             </div>
           </div>
         </div>
@@ -110,12 +98,9 @@ const Home = () => {
                 }}
                 
               >
-                {/* <img src={blog.image} alt="Image" className="w-full mb-4 rounded-lg" /> */}
-                <img
-                  class="object-cover object-center w-full h-full"
-                  src="https://images.unsplash.com/photo-1682407186023-12c70a4a35e0?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=2832&amp;q=80"
-                  alt="nature image"
-                />
+                <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full mb-4 rounded-lg" />
+
+               
                 <div className="ml-2">
                   <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
                   <p className="text-gray-700 ">{blog.body}</p>

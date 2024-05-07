@@ -29,7 +29,7 @@ const BlogView = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`https://localhost:7271/api/blog/getById/${id}`);
-        let result = response.data.result;
+        let result = response.data.result
         setBlog(result);
         setLikes(result.totalUpvotes);
         setDislikes(result.totalDownvotes);
@@ -98,6 +98,7 @@ const BlogView = () => {
         },
         { headers: headers }
       );
+      // Update comments state to reflect the new comment
       setComments(prevComments => [...prevComments, response.data.result]);
       setCommentText('');
     } catch (error) {
@@ -144,10 +145,11 @@ const BlogView = () => {
               </div>
             </div>
             <ul className="mt-4">
-              {comments != null ? (comments.map((comment, index) => (
+              {/* {comments != null ? (comments.map((comment, index) => (
                 <li key={index} className="text-gray-600">{comment}</li>
               ))) : (
                 <p>No Comments found.</p>
+
               )}
             </ul>
           </div>

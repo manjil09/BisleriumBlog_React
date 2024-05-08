@@ -1,59 +1,33 @@
-import { Typography } from "@material-tailwind/react";
- 
-export function Footer() {
+import React from 'react';
+
+const Footer = () => {
   return (
-    <footer className="w-full bg-white p-8">
-      <div className="flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 bg-white text-center md:justify-between">
-        <img src="https://docs.material-tailwind.com/img/logo-ct-dark.png" alt="logo-ct" className="w-10" />
-        <ul className="flex flex-wrap items-center gap-y-2 gap-x-8">
-          <li>
-            <Typography
-              as="a"
-              href="#"
-              color="blue-gray"
-              className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
-            >
-              About Us
-            </Typography>
-          </li>
-          <li>
-            <Typography
-              as="a"
-              href="#"
-              color="blue-gray"
-              className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
-            >
-              License
-            </Typography>
-          </li>
-          <li>
-            <Typography
-              as="a"
-              href="#"
-              color="blue-gray"
-              className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
-            >
-              Contribute
-            </Typography>
-          </li>
-          <li>
-            <Typography
-              as="a"
-              href="#"
-              color="blue-gray"
-              className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
-            >
-              Contact Us
-            </Typography>
-          </li>
-        </ul>
+    <footer className="bg-gray-800 text-gray-300 py-6">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-lg font-semibold">Your Company Name</h2>
+            <p className="text-sm">A short description about your company.</p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Quick Links</h3>
+            <ul className="mt-2">
+              <li className="mb-1"><a href="/" className="hover:text-white">Home</a></li>
+              <li className="mb-1"><a href="MyBlog" className="hover:text-white">My Blog </a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Follow Us</h3>
+            <ul className="mt-2">
+              <li className="mb-1"><a href="#" className="hover:text-white">Facebook</a></li>
+              <li className="mb-1"><a href="#" className="hover:text-white">Twitter</a></li>
+              <li className="mb-1"><a href="#" className="hover:text-white">Instagram</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <hr className="my-8 border-blue-gray-50" />
-      <Typography color="blue-gray" className="text-center font-normal">
-        &copy; 2023 Material Tailwind
-      </Typography>
     </footer>
   );
-}
-export default Footer;
+};
 
+export default Footer;

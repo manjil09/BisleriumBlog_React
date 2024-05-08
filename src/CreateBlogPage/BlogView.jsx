@@ -3,10 +3,10 @@ import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import { useParams } from 'react-router-dom';
 import { FaThumbsUp, FaThumbsDown, FaEdit, FaTrash } from 'react-icons/fa';
-import Loader from '../components/Loader/Loader';
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
 import LoginDialogue from '../components/LoginDialogue';
+
 
 const BlogView = () => {
   const { id } = useParams();
@@ -20,7 +20,6 @@ const BlogView = () => {
   const [editedCommentText, setEditedCommentText] = useState('');
   const authToken = JSON.parse(localStorage.getItem('token'));
   const userData = getUserDataFromToken();
-  const userId = userData.userId;
   const [openLoginDialogue, setOpenLoginDialogue] = useState(false);
   const headers = {
     'Content-Type': 'application/json',
@@ -52,11 +51,13 @@ const BlogView = () => {
       return;
     }
     try {
-      await axios.post(
+    const response = await axios.post(
         `https://localhost:7271/api/blog/reaction/upvote?blogId=${id}&userId=${userData.userId}`,
         {},
         { headers: headers }
       );
+      setLikes(response.data.result.totalUpvotes)
+      setDislikes(response.data.result.totalDownvotes)
       console.log('Upvote successful');
       // Handle success if needed
     } catch (error) {
@@ -71,12 +72,14 @@ const BlogView = () => {
       return;
     }
     try {
-      await axios.post(
+    const response =  await axios.post(
         `https://localhost:7271/api/blog/reaction/downvote?blogId=${id}&userId=${userData.userId}`,
         {},
         { headers: headers }
       );
       console.log('Downvote successful');
+      setLikes(response.data.result.totalUpvotes)
+      setDislikes(response.data.result.totalDownvotes)
       // Handle success if needed
     } catch (error) {
       console.error('Error downvoting:', error);
@@ -95,7 +98,7 @@ const BlogView = () => {
         {
           blogId: id,
           body: commentText,
-          userId: userId
+          userId: userData.userId
         },
         { headers: headers }
       );
@@ -198,7 +201,7 @@ const BlogView = () => {
                   ) : (
                     <>
                       {comment.body}
-                      {comment.userId === userId && (
+                      {comment.userId === userData?.userId && (
                         <>
                           <button onClick={() => {setEditingCommentId(comment.id); setEditedCommentText(comment.body);}} className="ml-2 text-blue-500">
                             <FaEdit />

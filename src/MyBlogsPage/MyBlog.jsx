@@ -6,9 +6,7 @@ import getUserDataFromToken from '../tokenUtils';
 import { FaPlus, FaSearch } from 'react-icons/fa'; // Importing icons
 import Modal from '../Modal';
 import CreateBlog from '../CreateBlogPage/CreateBlog';
-
 export const BAS_URL = "https://localhost:7271/";
-
 function MyBlog() {
   const [blogPosts, setBlogPosts] = useState([]);
   const [editingBlog, setEditingBlog] = useState(null);
@@ -19,7 +17,11 @@ function MyBlog() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // State for controlling modal
 
   const userData = getUserDataFromToken();
-  const userId = userData.userId;
+  const authToken = JSON.parse(localStorage.getItem('token'));
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${authToken}`
+  };
 
   useEffect(() => {
     fetchBlogPosts();
@@ -27,7 +29,7 @@ function MyBlog() {
 
   const fetchBlogPosts = async () => {
     try {
-      const response = await axios.get(`https://localhost:7271/api/blog/getByUserId/${userId}`);
+      const response = await axios.get(`https://localhost:7271/api/blog/getByUserId/${userData.userId}`);
       setBlogPosts(response.data.result);
     } catch (error) {
       console.error('Error fetching blog data:', error);
@@ -36,15 +38,14 @@ function MyBlog() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://localhost:7271/api/blog/delete/${id}`);
+      await axios.delete(`https://localhost:7271/api/blog/delete/${id}`, { headers });
       fetchBlogPosts();
     } catch (error) {
       console.error('Error deleting blog post:', error);
     }
   };
-
+  
   const handleUpdate = async (id) => {
-    console.log(updatedTitle+"fhis aslkfj a owe osdfs")
     try {
       const formData = new FormData();
       formData.append('title', updatedTitle);
@@ -52,7 +53,8 @@ function MyBlog() {
       formData.append('Image', updatedImage); // Append image to formData
       const response = await axios.put(
         `https://localhost:7271/api/blog/update/${id}`,
-        formData,{}
+        formData,
+        { headers } // Pass headers to the request
       );
       
       if (response.status === 200) {
@@ -76,16 +78,10 @@ function MyBlog() {
     }
   };
   
+  
 
   const handleImageChange = (e) => {
-    // const file = e.target.files[0];
-    // const reader = new FileReader();
-    // reader.onloadend = () => {
-    //   setUpdatedImage(reader.result);
-    // };
-    // if (file) {
-    //   reader.readAsDataURL(file);
-    // }
+   
     const file = e.target.files[0];
     setUpdatedImage(file);
   };

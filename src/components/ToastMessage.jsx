@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LoginMessage = ({ message, isSuccess }) => {
+const ToastMessage = ({ message, isSuccess }) => {
     return (
         <div className={`text-center ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
             {message}
@@ -8,4 +8,4 @@ const LoginMessage = ({ message, isSuccess }) => {
     );
 };
 
-export default LoginMessage;
+export default ToastMessage;

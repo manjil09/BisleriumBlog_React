@@ -5,6 +5,7 @@ import Loader from '../components/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
+import Footer from '../NavBar/Footer';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -126,6 +127,8 @@ const Home = () => {
         <div>
         </div>
       </div>
+      <Footer /> {/* Include Footer component */}
+
     </>
   );
 };

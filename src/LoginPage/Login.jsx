@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Loader from '../components/Loader/Loader';
-import LoginMessage from '../components/LoginMessage'; // Import the LoginMessage component
+import ToastMessage from '../components/ToastMessage'; // Import the LoginMessage component
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -41,7 +41,7 @@ const Login = () => {
                 window.location.href = '/';
             } else {
                 console.error('Login failed');
-                setLoginMessage({ message: 'Login failed. Please try again.', isSuccess: false }); // Set failure message
+                setLoginMessage({ message: 'Invalid username or password!', isSuccess: false }); // Set failure message
                 // Handle login failure, e.g., display error message
             }
         } catch (error) {
@@ -65,7 +65,7 @@ const Login = () => {
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 {/* Render login message component */}
                 {loginMessage.message && (
-                    <LoginMessage message={loginMessage.message} isSuccess={loginMessage.isSuccess} />
+                    <ToastMessage message={loginMessage.message} isSuccess={loginMessage.isSuccess} />
                 )}
 
                 <form className="space-y-6" action="#" method="POST">

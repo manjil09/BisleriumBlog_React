@@ -70,9 +70,10 @@ const Home = () => {
     <>
       <Navigation />
       <div className="container mx-auto bg-gray-300 p-4">
-        <h2 className="text-2xl mb-4">Welcome to BisleriumBlog</h2>
 
-        <div className="relative flex justify-end items-center">
+        <div className="relative flex justify-between items-center">
+        <h2 className="text-2xl mb-4">Welcome to BisleriumBlog</h2>
+        <div className="relative flex justify-between items-center">
           <h3 className="text-lg font-semibold mr-2">Sort By:</h3>
           <select
             value={sortBy}
@@ -83,6 +84,7 @@ const Home = () => {
             <option value="popularity">Popularity</option>
             <option value="random">Random</option>
           </select>
+          </div>
         </div>
 
         <div className="flex flex-wrap justify-center gap-8">

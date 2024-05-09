@@ -35,7 +35,7 @@ function App() {
         <Route path="/myBlog" element={<MyBlog />}></Route>
         <Route path="/profile" element={<ProfilePage />}></Route>
         <Route path="/changePassword" element={<ChangePassword />}></Route>
-        <Route path="/notificationsPage" element={<BlogByMonthChart />}></Route>
+        <Route path="/notificationsPage" element={<NotificationsPage />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/userView" element={<UserView />}></Route>
         <Route path="/editProfile" element={<EditProfile />}></Route>

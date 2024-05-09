@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Loader from '../components/Loader/Loader';
+import getUserDataFromToken from '../tokenUtils';
 import ToastMessage from '../components/ToastMessage'; // Import the LoginMessage component
 
 const Login = () => {
@@ -35,10 +36,18 @@ const Login = () => {
                 console.log('Token:', token); // Log token data to console
                 localStorage.setItem('token', JSON.stringify(token)); // Save token to local storage
 
+                const userData = getUserDataFromToken();
                 setLoading(true);
                 setLoginMessage({ message: 'Login successful!', isSuccess: true }); // Set success message
                 // Redirect user to home page
-                window.location.href = '/';
+                if (userData.role === 'Admin') {
+                    console.log("admin")
+                    window.location.href = '/dashboard';
+
+                } else {
+                    console.log("user")
+                    window.location.href = '/';
+                }
             } else {
                 console.error('Login failed');
                 setLoginMessage({ message: 'Invalid username or password!', isSuccess: false }); // Set failure message

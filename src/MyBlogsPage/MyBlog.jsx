@@ -54,6 +54,8 @@ function MyBlog() {
       try {
         await axios.delete(`https://localhost:7271/api/blog/delete/${id}`, { headers });
         fetchBlogPosts();
+      window.location.reload();
+
       } catch (error) {
         console.error('Error deleting blog post:', error);
       }

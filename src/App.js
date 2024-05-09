@@ -15,6 +15,7 @@ import Dashboard from './Dashboard';
 import AdmineRegister from './RegisterPage/AdmineRegister';
 import UserView from './UserView/UserView';
 import EditProfile from './ProfilePage/EditProfile';
+import ForgetPassword from './ForgetPassword/ForgetPassword';
 
 
 
@@ -39,14 +40,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/userView" element={<UserView />}></Route>
         <Route path="/editProfile" element={<EditProfile />}></Route>
-
-
-
-
-
-
-        {/* <Route path ="/ " element={<AdminDashboard/>}></Route> */}
-        ChangePassword
+        <Route path="/forgetPassword" element={<ForgetPassword />}></Route>
       </Routes>
     </BrowserRouter>
 

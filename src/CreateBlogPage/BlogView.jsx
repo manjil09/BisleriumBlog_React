@@ -83,7 +83,7 @@ const BlogView = () => {
     console.log('Upvote successful ' + response.data.result.blogCreatorId + ' kd ' + response.data.result.type);
     // Send notification to the creator
     if (hubConnection && blog) {
-      await hubConnection.send('SendNotification', creatorId, `Someone toggled the ${type} in your blog.`);
+      await hubConnection.send('SendNotification', creatorId, type);
       console.log('Notification sent to the creator');
     } else {
       console.log('Notification sent error');
@@ -103,7 +103,7 @@ const BlogView = () => {
       setLikes(response.data.result.totalUpvotes);
       setDislikes(response.data.result.totalDownvotes);
       checkHasUpvoteOrDownvote();
-      sendNotification(response, 'upvote');
+      sendNotification(response, `Someone toggled upvote in your blog.`);
       console.log('Upvote successful');
     } catch (error) {
       console.error('Error upvoting:', error);
@@ -125,7 +125,7 @@ const BlogView = () => {
       setLikes(response.data.result.totalUpvotes);
       setDislikes(response.data.result.totalDownvotes);
       checkHasUpvoteOrDownvote();
-      sendNotification(response, 'downvote');
+      sendNotification(response, `Someone toggled downvote in your blog.`);
     } catch (error) {
       console.error('Error downvoting:', error);
     }
@@ -142,9 +142,8 @@ const BlogView = () => {
         {},
         { headers: headers }
       );
-      console.log('Comment Upvote successful');
-      let result = response.data.result;
-      checkHasUpvoteOrDownvote();
+      console.log('Comment Upvote successful.');
+      window.location.reload();
     } catch (error) {
       console.error('Error comment upvoting:', error);
     }
@@ -161,9 +160,7 @@ const BlogView = () => {
         { headers: headers }
       );
       console.log('Comment Downvote successful');
-      setLikes(response.data.result.totalUpvotes);
-      setDislikes(response.data.result.totalDownvotes);
-      checkHasUpvoteOrDownvote();
+      window.location.reload();
     } catch (error) {
       console.error('Error Comment downvoting:', error);
     }
@@ -188,6 +185,7 @@ const BlogView = () => {
         comments: [...prevCommentsData.comments, response.data.result]
       }));
       window.location.reload();
+      sendNotification(response, 'Someone commented on your blog.');
       setCommentText('');
     } catch (error) {
       console.error('Error adding comment:', error);

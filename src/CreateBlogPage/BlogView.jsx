@@ -7,6 +7,7 @@ import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
 import LoginDialogue from '../components/LoginDialogue';
 import NoPostsFoundMessage from '../components/NoPostsFoundMessage';
+import * as signalR from '@microsoft/signalr';
 
 const BlogView = () => {
   const { id } = useParams();
@@ -29,6 +30,34 @@ const BlogView = () => {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${authToken}`
   };
+  const [hubConnection, setHubConnection] = useState(null);
+
+  useEffect(() => {
+    // Initialize SignalR hub connection
+    const initializeSignalR = async () => {
+      const connection = new signalR.HubConnectionBuilder()
+        .withUrl('https://localhost:7271/notification')
+        .withAutomaticReconnect()
+        .build();
+
+      try {
+        await connection.start();
+        console.log('SignalR hub connection established');
+        setHubConnection(connection);
+      } catch (error) {
+        console.error('Error establishing SignalR hub connection:', error);
+      }
+    };
+
+    initializeSignalR();
+
+    return () => {
+      if (hubConnection) {
+        hubConnection.stop();
+        console.log('SignalR hub connection stopped');
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +78,17 @@ const BlogView = () => {
 
     fetchData();
   }, [id]);
-
+  const sendNotification = async (response, type) => {
+    let creatorId = response.data.result.blogCreatorId
+    console.log('Upvote successful ' + response.data.result.blogCreatorId + ' kd ' + response.data.result.type);
+    // Send notification to the creator
+    if (hubConnection && blog) {
+      await hubConnection.send('SendNotification', creatorId, `Someone toggled the ${type} in your blog.`);
+      console.log('Notification sent to the creator');
+    } else {
+      console.log('Notification sent error');
+    }
+  }
   const handleUpvote = async () => {
     if (!userData) {
       setOpenLoginDialogue(true);
@@ -64,6 +103,7 @@ const BlogView = () => {
       setLikes(response.data.result.totalUpvotes);
       setDislikes(response.data.result.totalDownvotes);
       checkHasUpvoteOrDownvote();
+      sendNotification(response, 'upvote');
       console.log('Upvote successful');
     } catch (error) {
       console.error('Error upvoting:', error);
@@ -85,6 +125,7 @@ const BlogView = () => {
       setLikes(response.data.result.totalUpvotes);
       setDislikes(response.data.result.totalDownvotes);
       checkHasUpvoteOrDownvote();
+      sendNotification(response, 'downvote');
     } catch (error) {
       console.error('Error downvoting:', error);
     }
@@ -232,7 +273,7 @@ const BlogView = () => {
               <div className="flex items-center mt-4">
                 <div className="flex items-center mr-4">
                   <FaThumbsUp
-                    onClick={()=>{
+                    onClick={() => {
                       handleUpvote();
                       setHasUpvote(!hasUpvote);
                     }}
@@ -242,7 +283,8 @@ const BlogView = () => {
                 </div>
                 <div className="flex items-center">
                   <FaThumbsDown
-                    onClick={()=>{handleDownvote();
+                    onClick={() => {
+                      handleDownvote();
                       setHasDownvote(!hasDownvote)
                     }}
                     className={`cursor-pointer mr-1 ${hasDownvote ? 'text-red-500' : 'text-gray-500'}`}
@@ -289,14 +331,14 @@ const BlogView = () => {
                         <div className="flex items-center mt-1">
                           <div className="flex items-center mr-4">
                             <FaThumbsUp
-                              onClick={()=>handleCommentUpvote(comment.id)}
+                              onClick={() => handleCommentUpvote(comment.id)}
                               className={`cursor-pointer mr-1 }`}
                             />
                             <span>{comment.totalUpvotes}</span>
                           </div>
                           <div className="flex items-center" >
                             <FaThumbsDown
-                              onClick={()=>handleCommentDownvote(comment.id)}
+                              onClick={() => handleCommentDownvote(comment.id)}
                               className={`cursor-pointer mr-1 `}
                             />
                             <span>{comment.totalDownvotes}</span>

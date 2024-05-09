@@ -20,6 +20,8 @@ const BlogView = () => {
   const [editedCommentText, setEditedCommentText] = useState('');
   const authToken = JSON.parse(localStorage.getItem('token'));
   const userData = getUserDataFromToken();
+  const [hasUpvote, setHasUpvote] = useState(false);
+  const [hasDownvote, setHasDownvote] = useState(false);
   const [openLoginDialogue, setOpenLoginDialogue] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
@@ -38,6 +40,7 @@ const BlogView = () => {
         setDislikes(blogData.totalDownvotes);
         const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
         setCommentsData(commentsResponse.data.result);
+        checkHasUpvoteOrDownvote();
       } catch (error) {
         console.error('Error fetching blog data:', error);
         setLoading(false);
@@ -60,6 +63,7 @@ const BlogView = () => {
       );
       setLikes(response.data.result.totalUpvotes);
       setDislikes(response.data.result.totalDownvotes);
+      checkHasUpvoteOrDownvote();
       console.log('Upvote successful');
     } catch (error) {
       console.error('Error upvoting:', error);
@@ -72,7 +76,7 @@ const BlogView = () => {
       return;
     }
     try {
-      const response =  await axios.post(
+      const response = await axios.post(
         `https://localhost:7271/api/blog/reaction/downvote?blogId=${id}&userId=${userData.userId}`,
         {},
         { headers: headers }
@@ -80,11 +84,49 @@ const BlogView = () => {
       console.log('Downvote successful');
       setLikes(response.data.result.totalUpvotes);
       setDislikes(response.data.result.totalDownvotes);
+      checkHasUpvoteOrDownvote();
     } catch (error) {
       console.error('Error downvoting:', error);
     }
   };
 
+  const handleCommentUpvote = async (commentId) => {
+    if (!userData) {
+      setOpenLoginDialogue(true);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `https://localhost:7271/api/comment/reaction/upvote?commentId=${commentId}&userId=${userData.userId}`,
+        {},
+        { headers: headers }
+      );
+      console.log('Comment Upvote successful');
+      let result = response.data.result;
+      checkHasUpvoteOrDownvote();
+    } catch (error) {
+      console.error('Error comment upvoting:', error);
+    }
+  };
+  const handleCommentDownvote = async (commentId) => {
+    if (!userData) {
+      setOpenLoginDialogue(true);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `https://localhost:7271/api/comment/reaction/downvote?commentId=${commentId}&userId=${userData.userId}`,
+        {},
+        { headers: headers }
+      );
+      console.log('Comment Downvote successful');
+      setLikes(response.data.result.totalUpvotes);
+      setDislikes(response.data.result.totalDownvotes);
+      checkHasUpvoteOrDownvote();
+    } catch (error) {
+      console.error('Error Comment downvoting:', error);
+    }
+  };
   const handleComment = async () => {
     if (!userData) {
       setOpenLoginDialogue(true);
@@ -110,6 +152,28 @@ const BlogView = () => {
       console.error('Error adding comment:', error);
     }
   };
+
+  const checkHasUpvoteOrDownvote = async () => {
+    try {
+      const reactionResponse = await axios.get(
+        `https://localhost:7271/api/blog/reaction/getUserReactions/${id}/${userData.userId}`,
+        { headers: headers }
+      );
+      console.log(reactionResponse.data.result.type);
+      let reactionResult = reactionResponse.data.result;
+      if (reactionResult) {
+        if (reactionResult.type === 0) {
+          setHasUpvote(true);
+          setHasDownvote(false);
+        } else {
+          setHasDownvote(true);
+          setHasUpvote(false);
+        }
+      }
+    } catch (error) {
+      console.log('Error adding comment:', error);
+    }
+  }
 
   const handleUpdateComment = async (commentId) => {
     try {
@@ -158,7 +222,7 @@ const BlogView = () => {
         {blog && (
           <div className="bg-gray shadow-md rounded-md p-6 mb-6">
             <div className="w-30 h-30">
-              <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="mx-auto w-64 h-full mb-4 rounded-lg"/>
+              <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="mx-auto w-64 h-full mb-4 rounded-lg" />
             </div>
             <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
             <p className="text-gray-700 mb-2">{blog.body}</p>
@@ -168,72 +232,96 @@ const BlogView = () => {
               <div className="flex items-center mt-4">
                 <div className="flex items-center mr-4">
                   <FaThumbsUp
-                    onClick={handleUpvote}
-                    className={`cursor-pointer mr-1 ${likes ? 'text-blue-500' : 'text-gray-500'}`}
+                    onClick={()=>{
+                      handleUpvote();
+                      setHasUpvote(!hasUpvote);
+                    }}
+                    className={`cursor-pointer mr-1 ${hasUpvote ? 'text-blue-500' : 'text-gray-500'}`}
                   />
                   <span>{likes}</span>
                 </div>
                 <div className="flex items-center">
                   <FaThumbsDown
-                    onClick={handleDownvote}
-                    className={`cursor-pointer mr-1 ${dislikes ? 'text-red-500' : 'text-gray-500'}`}
+                    onClick={()=>{handleDownvote();
+                      setHasDownvote(!hasDownvote)
+                    }}
+                    className={`cursor-pointer mr-1 ${hasDownvote ? 'text-red-500' : 'text-gray-500'}`}
                   />
                   <span>{dislikes}</span>
                 </div>
               </div>
               <LoginDialogue open={openLoginDialogue} setOpen={() => setOpenLoginDialogue(false)} />
-              
+
             </div>
-            <br/>
+            <br />
             <div >
-                <input
-                  type="text"
-                  placeholder="Add a comment"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
-                />
-                <button onClick={handleComment} className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-2">
-                  Add Comment
-                </button>
-              </div>
+              <input
+                type="text"
+                placeholder="Add a comment"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
+              />
+              <button onClick={handleComment} className="bg-blue-500 text-white px-4 py-2 rounded-lg ml-2">
+                Add Comment
+              </button>
+            </div>
             <ul className="mt-4">
-            {commentsData && commentsData.comments.length > 0 ? (
-              commentsData.comments.map((comment, index) => (
-                <li key={index} className="text-gray-600">
-                  <strong>{comment.userName}:</strong> {comment.id === editingCommentId ? (
-                    <>
-                      <input
-                        type="text"
-                        value={editedCommentText}
-                        onChange={(e) => setEditedCommentText(e.target.value)}
-                        className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
-                      />
-                      <button onClick={() => handleUpdateComment(comment.id)} className="ml-2 bg-blue-500 text-white px-2 py-1 rounded-md">
-                        Update
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      {comment.body}
-                      {comment.userId === userData?.userId && (
-                        <>
-                          <button onClick={() => {setEditingCommentId(comment.id); setEditedCommentText(comment.body);}} className="ml-2 text-blue-500">
-                            <FaEdit />
-                          </button>
-                          <button onClick={() => handleDeleteComment(comment.id)} className="ml-2 text-red-500">
-                            <FaTrash />
-                          </button>
-                        </>
-                      )}
-                    </>
-                  )}
-                </li>
-              ))
-            ) : (
-              <NoPostsFoundMessage/>
-            )}
-          </ul>
+              {commentsData && commentsData.comments && commentsData.comments.length > 0 ? (
+                commentsData.comments.map((comment, index) => (
+                  <li key={index} className="text-gray-600">
+                    <strong>{comment.userName}:</strong> {comment.id === editingCommentId ? (
+                      <>
+                        <input
+                          type="text"
+                          value={editedCommentText}
+                          onChange={(e) => setEditedCommentText(e.target.value)}
+                          className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
+                        />
+
+                        <button onClick={() => handleUpdateComment(comment.id)} className="ml-2 bg-blue-500 text-white px-2 py-1 rounded-md">
+                          Update
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {comment.body}
+                        <div className="flex items-center mt-1">
+                          <div className="flex items-center mr-4">
+                            <FaThumbsUp
+                              onClick={()=>handleCommentUpvote(comment.id)}
+                              className={`cursor-pointer mr-1 }`}
+                            />
+                            <span>{comment.totalUpvotes}</span>
+                          </div>
+                          <div className="flex items-center" >
+                            <FaThumbsDown
+                              onClick={()=>handleCommentDownvote(comment.id)}
+                              className={`cursor-pointer mr-1 `}
+                            />
+                            <span>{comment.totalDownvotes}</span>
+                          </div>
+                        </div>
+
+                        {comment.userId === userData?.userId && (
+                          <>
+                            <button onClick={() => { setEditingCommentId(comment.id); setEditedCommentText(comment.body); }} className="ml-2 mt-1 text-blue-500">
+                              <FaEdit />
+                            </button>
+                            <button onClick={() => handleDeleteComment(comment.id)} className="ml-6 mt-2 text-red-500">
+                              <FaTrash />
+                            </button>
+                          </>
+                        )}
+                        <hr /><br />
+                      </>
+                    )}
+                  </li>
+                ))
+              ) : (
+                <NoPostsFoundMessage />
+              )}
+            </ul>
           </div>
         )}
       </div>

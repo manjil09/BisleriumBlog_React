@@ -11,6 +11,11 @@ import MyBlog from './MyBlogsPage/MyBlog';
 import ChangePassword from './ProfilePage/ChangePassword';
 import NotificationsPage from './NotificationsPage/NotificationsPage';
 import BlogByMonthChart from './BlogByMonthChart';
+import Dashboard from './Dashboard';
+import AdmineRegister from './RegisterPage/AdmineRegister';
+import UserView from './UserView/UserView';
+import EditProfile from './ProfilePage/EditProfile';
+
 
 
 
@@ -24,12 +29,19 @@ function App() {
         <Route path="/nav" element={<Navigation />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
+        <Route path="/adminRegister" element={<AdmineRegister />}></Route>
         <Route path="/createBlog" element={<CreateBlog />}></Route>
         <Route path="/blogView/:id" element={<BlogView />}></Route>
         <Route path="/myBlog" element={<MyBlog />}></Route>
         <Route path="/profile" element={<ProfilePage />}></Route>
-        <Route path="/changepassword" element={<ChangePassword />}></Route>
+        <Route path="/changePassword" element={<ChangePassword />}></Route>
         <Route path="/notificationsPage" element={<BlogByMonthChart />}></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/userView" element={<UserView />}></Route>
+        <Route path="/editProfile" element={<EditProfile />}></Route>
+
+
+
 
 
 

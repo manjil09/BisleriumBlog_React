@@ -1,81 +1,60 @@
 import React, { useState, useEffect } from 'react';
+import Navigation from './NavBar/Navigation';
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
-import Chart from 'chart.js/auto'; // Import Chart.js directly
 
-const BlogByMonthChart = () => {
-  const [blogData, setBlogData] = useState([]);
-  const authToken = JSON.parse(localStorage.getItem('token'));
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${authToken}`
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Dynamically construct the query parameters based on some other data
-        const queryParams = new URLSearchParams({
-          month: getMonth(), // Call a function to get the month value dynamically
-          year: getYear(), // Call a function to get the year value dynamically
-          sortBy: 'popularity', // Example sortBy value, replace with actual value
-          isAscending: false // Example isAscending value, replace with actual value
-        });
-
-        // Make the API call with the constructed URL
-        const response = await axios.get(`https://localhost:7271/api/blog/getByMonth?${queryParams}`, { headers });
-        setBlogData(response.data.result);
-      } catch (error) {
-        console.error('Error fetching blog data by month:', error);
-      }
+const Dashboard = () => {
+    const [blogs, setBlogs] = useState([]);
+    const authToken = JSON.parse(localStorage.getItem('token'));
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
     };
 
-    fetchData();
-  }, []);
+    useEffect(() => {
+        axios.get('https://localhost:7271/api/blog/getByMonth?month=5&year=2024&sortBy=popularity&isAscending=false', { headers })
+            .then(response => {
+                setBlogs(response.data.result.blogs);
+            })
+            .catch(error => {
+                console.error('Error fetching blogs:', error);
+            });
+    }, []); 
 
-  const getMonth = () => {
-   
-    return new Date().getMonth() + 1; // Adding 1 because getMonth() returns zero-based month index
-  };
-
-  const getYear = () => {
-    // Logic to get the year value dynamically
-    // For example, you can use Date() to get the current year
-    return new Date().getFullYear();
-  };
-
-  const months = blogData.map(item => item.month);
-  const counts = blogData.map(item => item.count);
-
-  const data = {
-    labels: months,
-    datasets: [
-      {
-        label: 'Blog Posts',
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        borderColor: 'rgba(75,192,192,1)',
-        borderWidth: 1,
-        hoverBackgroundColor: 'rgba(75,192,192,0.4)',
-        hoverBorderColor: 'rgba(75,192,192,1)',
-        data: counts,
-      },
-    ],
-  };
-
-  const options = {
-    scales: {
-      x: {
-        type: 'category', // Explicitly set scale type to 'category' for the x-axis
-      },
-    },
-  };
-
-  return (
-    <div>
-      <h2 className="text-2xl mb-4">Blog Posts by Month</h2>
-      <Bar data={data} options={options} />
-    </div>
-  );
+    return (
+        <>
+            <Navigation />
+            <div className="mx-auto px-4 py-8">
+                <h1 className="text-3xl font-semibold mb-4">Dashboard</h1>
+                <p className="text-gray-600 mb-8">Welcome to the Dashboard!</p>
+                <table className="table-auto">
+                    <thead>
+                        <tr>
+                            <th className="px-4 py-2">ID</th>
+                            <th className="px-4 py-2">Title</th>
+                            <th className="px-4 py-2">User Name</th>
+                            <th className="px-4 py-2">Total Upvotes</th>
+                            <th className="px-4 py-2">Total Downvotes</th>
+                            <th className="px-4 py-2">Total Comments</th>
+                            <th className="px-4 py-2">Popularity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {blogs.map(blog => (
+                            <tr key={blog.id}>
+                                <td className="border px-4 py-2">{blog.id}</td>
+                                <td className="border px-4 py-2">{blog.title}</td>
+                                <td className="border px-4 py-2">{blog.userName}</td>
+                                <td className="border px-4 py-2">{blog.totalUpvotes}</td>
+                                <td className="border px-4 py-2">{blog.totalDownvotes}</td>
+                                <td className="border px-4 py-2">{blog.totalComments}</td>
+                                <td className="border px-4 py-2">{blog.popularity}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </>
+    );
 };
 
-export default BlogByMonthChart;
+export default Dashboard;

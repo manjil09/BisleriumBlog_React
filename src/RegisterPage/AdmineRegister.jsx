@@ -1,16 +1,22 @@
-// Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import Loader from '../components/Loader/Loader';
 import ToastMessage from '../components/ToastMessage'; 
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Navigation from '../NavBar/Navigation';
 
-const Register = () => {
+const AdmineRegister = () => {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-        const [registerMessage, setRegisterMessage] = useState(''); // State for registration message
+    const [registerMessage, setRegisterMessage] = useState('');
+    const authToken = JSON.parse(localStorage.getItem('token'));
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+    };
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -30,82 +36,42 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('https://localhost:7271/api/user/register', {
+            const response = await axios.post('https://localhost:7271/api/user/registerAdmin', {
                 method: 'POST',
                 userName: username,
                 userEmail: email,
                 password: password,
-            });
+            },{},{headers});
 
             setLoading(true);
-                setRegisterMessage('User register successful')
-                notify();
-                try {
-                    const response = await fetch('https://localhost:7271/api/user/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ username, password }),
-                    });
-        
-                    if (response.ok) {
-                        console.log('User Login successful!');
-                        const data = await response.json();
-                        const token = data.result;
-                        console.log('Token:', token); // Log token data to console
-                        localStorage.setItem('token', JSON.stringify(token)); // Save token to local storage
-        
-                        setLoading(true);
-                        setRegisterMessage('Login successful!'); // Set success message
-                        notify();// Set generic error message
-                // Redirect user to home page
-                        window.location.href = '/';
-                    } else {
-                        console.error('Login failed');
-                        setRegisterMessage('Invalid username or password!'); // Set failure message
-                       notify();// Set generic error message
-                // Handle login failure, e.g., display error message
-                    }
-                } catch (error) {
-                    console.error('An error occurred:', error);
-                    setRegisterMessage('An error occurred. Please try again later.'); // Set failure message
-                notify();// Set generic error message
-                // Handle network errors or other exceptions
-                }
-            
-            console.log('message:', response.data);
-            // You can add additional logic here, such as redirecting the user to a login page or displaying a success message
+            setRegisterMessage('Admin register successful')
+            notify();
+            // Redirect user to home page or perform other actions
         } catch (error) {
             console.error('Registration failed:', error);
             setLoading(false);
-            // setRegisterMessage('Registration Failed'); // Set error message from server response
-            // notify();// Set generic error message
-
+    
             if (error.response) {
-                // Server responded with an error status code
                 console.error('Error response from server:', error.response.data);
-                setRegisterMessage(error.response.data); // Set error message from server response
-                notify();// Set generic error message
-            } else if (error.request) {
-                // The request was made but no response was received
-                console.error('No response received from server:', error.request);
-                setRegisterMessage(error.response.data); 
-                notify();// Set generic error message
+                setRegisterMessage(error.response.data.message);
             } else {
-                // Something happened in setting up the request that triggered an error
-                console.error('Error while setting up request:', error.message);
-                setRegisterMessage(error.response.data); // Set generic error message
-                notify();// Set generic error message
+                console.error('Network error or other exception:', error.message);
+                setRegisterMessage('An error occurred during registration.');
             }
+    
+            setRegisterMessage('An error occurred during registration.');
+            notify(); // Display the error message
+        
         }
     };
 
     return (
+        <>
+        <Navigation/>
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Register an Account
+                     Create Admin Register Account
                 </h2>
             </div>
             <div>
@@ -113,13 +79,12 @@ const Register = () => {
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                {/* Render register message component */}
                 {registerMessage.message && (
                     <ToastMessage message={registerMessage.message} isSuccess={registerMessage.isSuccess} />
                 )}
                 <div>
-        <ToastContainer />
-      </div>
+                    <ToastContainer />
+                </div>
 
                 <form className="space-y-6" action="#" method="POST">
                     <div>
@@ -189,16 +154,11 @@ const Register = () => {
                         </button>
                     </div>
                 </form>
-
-                <p className="mt-10 text-center text-sm text-gray-500">
-                    Already have an account?{' '}
-                    <a href="./" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                        Login
-                    </a>
-                </p>
             </div>
         </div>
+
+        </>
     );
 };
 
-export default Register;
+export default AdmineRegister;

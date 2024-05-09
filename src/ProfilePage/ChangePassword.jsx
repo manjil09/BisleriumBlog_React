@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { ToastContainer ,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import getUserDataFromToken from '../tokenUtils';
+import { useNavigate } from 'react-router-dom'; // 
+
 
 const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('');
@@ -10,10 +12,21 @@ const ChangePassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const userData = getUserDataFromToken();
+  const [changePasswordMessage, setChangePasswordMessage] = useState(''); // State for change password message
   const authToken = JSON.parse(localStorage.getItem('token'));
+  const navigate = useNavigate();
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
+
+    // Validate password criteria
+    if (!oldPassword || !newPassword) {
+      setError('Please enter both old and new passwords.');
+      return;
+    }
+
+    // Reset error state
+    setError(null);
 
     try {
       setLoading(true);
@@ -26,16 +39,21 @@ const ChangePassword = () => {
           'Authorization': `Bearer ${authToken}`
         }
       });
-      toast.success(response.data.message); // Show success toast
-      setLoading(false);
+      setChangePasswordMessage(response.data.message); // Set change password message
+      notify(); // Display the success message
       setOldPassword('');
       setNewPassword('');
-      setError(null); // Reset error state on successful request
+      // Redirect to the profile page after successful password change
+      navigate('/profile');
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred while changing password');
+      notify(); // Display the error message
       setLoading(false);
     }
   };
+
+  // Function to display the notification message
+  const notify = () => toast(changePasswordMessage);
 
   return (
     <div className="flex flex-col items-center">
@@ -50,10 +68,11 @@ const ChangePassword = () => {
           <label htmlFor="newPassword" className="block text-gray-700">New Password</label>
           <input type="password" id="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required placeholder="Enter your new password" className="form-input mt-1 block w-full border border-gray-500 rounded-md focus:outline-none focus:border-blue-500 pl-4 pr-2" />
         </div>
-        <button type="submit" disabled={loading} className="bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        <button type="submit" disabled={loading} className={`bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
           {loading ? 'Changing Password...' : 'Change Password'}
         </button>
       </form>
+      <ToastContainer /> {/* Container for displaying toasts */}
     </div>
   );
 };

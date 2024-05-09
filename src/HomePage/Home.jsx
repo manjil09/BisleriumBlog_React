@@ -7,7 +7,7 @@ import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
 import Footer from '../NavBar/Footer';
 import NoPostsFoundMessage from '../components/NoPostsFoundMessage';
-
+import TruncateText from '../components/TruncateText';
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +15,7 @@ const Home = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [totalPages, setTotalPage] = useState(1);
   const url = `https://localhost:7271/api/blog/getAll?pageIndex=${pageIndex}&sortBy=${sortBy}`;
-  let navigate = useNavigate()
+  let navigate = useNavigate();
 
   const handleCardClick = (index) => {
     let path = `/blogView/${index}`;
@@ -36,7 +36,6 @@ const Home = () => {
     };
 
     fetchData();
-
   }, [url]); // Include sortBy in dependency array
 
   const handleSortChange = (sortByValue) => {
@@ -45,7 +44,7 @@ const Home = () => {
 
   const handlePagination = (pageIndex) => {
     setPageIndex(pageIndex);
-  }
+  };
 
   const prevPage = () => {
     if (pageIndex === 1) return;
@@ -93,18 +92,14 @@ const Home = () => {
               <div
                 key={index}
                 className="bg-white shadow-md rounded-md p-4 mb-4 mr-4 w-80 h-full"
-                onClick={() => {
-                  handleCardClick(blog.id);
-                }}
-
+                onClick={() => handleCardClick(blog.id)}
               >
                 <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full h-64 mb-4 rounded-lg" />
 
-
                 <div className="ml-2">
                   <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
-                  <p className="text-gray-700 ">{blog.body}</p>
-                  {/* <p className="text-gray-700 ">{blog.userName}</p> */}
+                  {/* Render truncated text with "See more" option */}
+                  <TruncateText text={blog.body} maxLength={150} />
                   <p className="text-gray-700">
                     By: {blog.userName}
                   </p>
@@ -115,9 +110,10 @@ const Home = () => {
               </div>
             ))
           ) : (
-            <NoPostsFoundMessage/>
+            <NoPostsFoundMessage />
           )}
         </div>
+
         <div className="flex justify-center mt-4">
           {[...Array(totalPages).keys()].map((page) => (
             <button
@@ -129,11 +125,8 @@ const Home = () => {
             </button>
           ))}
         </div>
-        <div>
-        </div>
       </div>
-      <Footer /> {/* Include Footer component */}
-
+      <Footer />
     </>
   );
 };

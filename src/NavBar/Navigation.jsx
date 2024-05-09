@@ -4,12 +4,15 @@ import { NavLink } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon, BellIcon } from '@heroicons/react/24/outline';
 import getUserDataFromToken from '../tokenUtils';
 
+const userData = getUserDataFromToken();
 const navigation = [
+  { name: 'Dashboard ', href: '/dashboard', },
+  { name: 'Admin Register ', href: '/adminRegister', },
+  { name: 'User View', href: '/userView', },
   { name: 'Home', href: '/', current: true },
   { name: 'My Blog', href: '/myBlog' },
+  
 ];
-const userData = getUserDataFromToken();
-
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');

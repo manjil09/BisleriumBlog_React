@@ -3,13 +3,16 @@ import axios from 'axios';
 import moment from 'moment';
 import Navigation from '../NavBar/Navigation';
 import getUserDataFromToken from '../tokenUtils';
-import { FaPlus, FaSearch } from 'react-icons/fa'; // Importing icons
+import { FaPlus, FaSearch } from 'react-icons/fa';
 import Modal from '../Modal';
 import CreateBlog from '../CreateBlogPage/CreateBlog';
 import Footer from '../NavBar/Footer';
 import NoPostsFoundMessage from '../components/NoPostsFoundMessage';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const BAS_URL = "https://localhost:7271/";
+
 function MyBlog() {
   const [blogPosts, setBlogPosts] = useState([]);
   const [editingBlog, setEditingBlog] = useState(null);
@@ -17,14 +20,21 @@ function MyBlog() {
   const [updatedBody, setUpdatedBody] = useState('');
   const [updatedImage, setUpdatedImage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // State for controlling modal
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const userData = getUserDataFromToken();
   const authToken = JSON.parse(localStorage.getItem('token'));
   const headers = {
-    'Content-Type': 'application/json',
+    'Content-Type': 'multipart/form-data',
     'Authorization': `Bearer ${authToken}`
   };
+  const notify = () => toast(errorMessage);
+
+  const filteredBlogPosts = blogPosts.filter(post => {
+    return post.title.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
 
   useEffect(() => {
     fetchBlogPosts();
@@ -40,28 +50,35 @@ function MyBlog() {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`https://localhost:7271/api/blog/delete/${id}`, { headers });
-      fetchBlogPosts();
-    } catch (error) {
-      console.error('Error deleting blog post:', error);
+    if (window.confirm('Are you sure you want to delete this blog?')) {
+      try {
+        await axios.delete(`https://localhost:7271/api/blog/delete/${id}`, { headers });
+        fetchBlogPosts();
+      } catch (error) {
+        console.error('Error deleting blog post:', error);
+      }
     }
   };
-  
+
   const handleUpdate = async (id) => {
+    if (!updatedImage) {
+      setErrorMessage('Image is required');
+      notify();
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append('title', updatedTitle);
       formData.append('body', updatedBody);
-      formData.append('Image', updatedImage); // Append image to formData
+      formData.append('image', updatedImage);
       const response = await axios.put(
         `https://localhost:7271/api/blog/update/${id}`,
         formData,
-        { headers } // Pass headers to the request
+        { headers }
       );
-      
+
       if (response.status === 200) {
-        // Blog post updated successfully
         fetchBlogPosts();
         setEditingBlog(null);
         setUpdatedTitle('');
@@ -80,19 +97,13 @@ function MyBlog() {
       }
     }
   };
-  
-  
 
   const handleImageChange = (e) => {
-   
     const file = e.target.files[0];
     setUpdatedImage(file);
   };
 
-  const filteredBlogPosts = blogPosts.filter(post => {
-    return post.title.toLowerCase().includes(searchTerm.toLowerCase());
-  });
-
+ 
   return (
     <>
       <Navigation />
@@ -112,7 +123,7 @@ function MyBlog() {
             </div>
             <button
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-green-600 flex items-center"
-              onClick={() => setIsCreateModalOpen(true)} // Open modal on button click
+              onClick={() => setIsCreateModalOpen(true)}
             >
               <FaPlus className="mr-2" />
               Create Blog
@@ -139,12 +150,9 @@ function MyBlog() {
             ))}
           </div>
         )}
-        {/* Modal for creating a new blog post */}
-        
         <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
           <CreateBlog onClose={() => setIsCreateModalOpen(false)} />
         </Modal>
-        {/* Edit Blog Modal */}
         {editingBlog && (
           <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-8 rounded-lg">
@@ -160,8 +168,8 @@ function MyBlog() {
           </div>
         )}
       </div>
-      <Footer /> {/* Include Footer component */}
-
+      <Footer />
+      <ToastContainer />
     </>
   );
 }

@@ -48,19 +48,83 @@ const BlogView = () => {
   }, [id]);
 
   const handleUpvote = async () => {
-    // Upvote logic...
+    if (!userData) {
+      setOpenLoginDialogue(true);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `https://localhost:7271/api/blog/reaction/upvote?blogId=${id}&userId=${userData.userId}`,
+        {},
+        { headers: headers }
+      );
+      setLikes(response.data.result.totalUpvotes);
+      setDislikes(response.data.result.totalDownvotes);
+      console.log('Upvote successful');
+    } catch (error) {
+      console.error('Error upvoting:', error);
+    }
   };
 
   const handleDownvote = async () => {
-    // Downvote logic...
+    if (!userData) {
+      setOpenLoginDialogue(true);
+      return;
+    }
+    try {
+      const response =  await axios.post(
+        `https://localhost:7271/api/blog/reaction/downvote?blogId=${id}&userId=${userData.userId}`,
+        {},
+        { headers: headers }
+      );
+      console.log('Downvote successful');
+      setLikes(response.data.result.totalUpvotes);
+      setDislikes(response.data.result.totalDownvotes);
+    } catch (error) {
+      console.error('Error downvoting:', error);
+    }
   };
 
   const handleComment = async () => {
-    // Comment logic...
+    if (!userData) {
+      setOpenLoginDialogue(true);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        'https://localhost:7271/api/comment/add',
+        {
+          blogId: id,
+          body: commentText,
+          userId: userData.userId
+        },
+        { headers: headers }
+      );
+      setCommentsData(prevCommentsData => ({
+        totalPages: prevCommentsData.totalPages,
+        comments: [...prevCommentsData.comments, response.data.result]
+      }));
+      window.location.reload();
+      setCommentText('');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
   };
 
   const handleUpdateComment = async (commentId) => {
-    // Update comment logic...
+    try {
+      await axios.put(
+        `https://localhost:7271/api/comment/update/${commentId}`,
+        { body: editedCommentText },
+        { headers: headers }
+      );
+      const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
+      setCommentsData(commentsResponse.data.result);
+      setEditingCommentId(null);
+      setEditedCommentText('');
+    } catch (error) {
+      console.error('Error updating comment:', error);
+    }
   };
 
   const handleDeleteComment = async (commentId) => {
@@ -118,7 +182,10 @@ const BlogView = () => {
                 </div>
               </div>
               <LoginDialogue open={openLoginDialogue} setOpen={() => setOpenLoginDialogue(false)} />
-              <div>
+              
+            </div>
+            <br/>
+            <div >
                 <input
                   type="text"
                   placeholder="Add a comment"
@@ -130,7 +197,6 @@ const BlogView = () => {
                   Add Comment
                 </button>
               </div>
-            </div>
             <ul className="mt-4">
             {commentsData && commentsData.comments.length > 0 ? (
               commentsData.comments.map((comment, index) => (

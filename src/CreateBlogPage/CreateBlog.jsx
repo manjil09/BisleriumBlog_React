@@ -4,7 +4,7 @@ import Navigation from '../NavBar/Navigation';
 import getUserDataFromToken from '../tokenUtils';
 
 
-const CreateBlog = () => {
+const CreateBlog = ({ onClose }) => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [image, setImage] = useState(null); // Change to null
@@ -59,7 +59,13 @@ const CreateBlog = () => {
 
   return (
         <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-xl">
+          <button onClick={onClose} className="text-gray-600 hover:text-red-600">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
           <h2 className="text-2xl mb-4">Create a New Blog Post</h2>
+         
           <form>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Title:</label>

@@ -6,6 +6,7 @@ import { FaThumbsUp, FaThumbsDown, FaEdit, FaTrash } from 'react-icons/fa';
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
 import LoginDialogue from '../components/LoginDialogue';
+import NoPostsFoundMessage from '../components/NoPostsFoundMessage';
 
 
 const BlogView = () => {
@@ -51,18 +52,16 @@ const BlogView = () => {
       return;
     }
     try {
-    const response = await axios.post(
+      const response = await axios.post(
         `https://localhost:7271/api/blog/reaction/upvote?blogId=${id}&userId=${userData.userId}`,
         {},
         { headers: headers }
       );
-      setLikes(response.data.result.totalUpvotes)
-      setDislikes(response.data.result.totalDownvotes)
+      setLikes(response.data.result.totalUpvotes);
+      setDislikes(response.data.result.totalDownvotes);
       console.log('Upvote successful');
-      // Handle success if needed
     } catch (error) {
       console.error('Error upvoting:', error);
-      // Handle error if needed
     }
   };
 
@@ -72,18 +71,16 @@ const BlogView = () => {
       return;
     }
     try {
-    const response =  await axios.post(
+      const response =  await axios.post(
         `https://localhost:7271/api/blog/reaction/downvote?blogId=${id}&userId=${userData.userId}`,
         {},
         { headers: headers }
       );
       console.log('Downvote successful');
-      setLikes(response.data.result.totalUpvotes)
-      setDislikes(response.data.result.totalDownvotes)
-      // Handle success if needed
+      setLikes(response.data.result.totalUpvotes);
+      setDislikes(response.data.result.totalDownvotes);
     } catch (error) {
       console.error('Error downvoting:', error);
-      // Handle error if needed
     }
   };
 
@@ -102,7 +99,6 @@ const BlogView = () => {
         },
         { headers: headers }
       );
-      // Update comments state to reflect the new comment
       setCommentsData(prevCommentsData => ({
         totalPages: prevCommentsData.totalPages,
         comments: [...prevCommentsData.comments, response.data.result]
@@ -120,7 +116,6 @@ const BlogView = () => {
         { body: editedCommentText },
         { headers: headers }
       );
-      // Fetch comments again to update the UI
       const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
       setCommentsData(commentsResponse.data.result);
       setEditingCommentId(null);
@@ -136,7 +131,6 @@ const BlogView = () => {
         `https://localhost:7271/api/comment/delete/${commentId}`,
         { headers: headers }
       );
-      // Fetch comments again to update the UI
       const commentsResponse = await axios.get(`https://localhost:7271/api/comment/getComments/${id}`);
       setCommentsData(commentsResponse.data.result);
     } catch (error) {
@@ -152,19 +146,26 @@ const BlogView = () => {
         {blog && (
           <div className="bg-gray shadow-md rounded-md p-6 mb-6">
             <div className="w-30 h-30">
-              <img src={`${BAS_URL}/${blog.imageUrl}`} alt="Image" className="w-full h-64 mb-4 rounded-lg" />
+            <img src={`${BAS_URL}/${blog.imageUrl}`}alt="Image"className="mx-auto w-64 h-full mb-4 rounded-lg"/>
             </div>
             <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
-            <p className="text-gray-700 mb-4">{blog.body}</p>
+            <p className="text-gray-700 mb-2">{blog.body}</p>
+            <p className="text-gray-700">  By: {blog.userName} </p>
             <p className="text-gray-600">Blog Post Date: {new Date(blog.updatedAt).toLocaleString()}</p>
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center mt-4">
                 <div className="flex items-center mr-4">
-                  <FaThumbsUp onClick={handleUpvote} className="cursor-pointer mr-1 hover:text-blue-500" />
+                  <FaThumbsUp
+                    onClick={handleUpvote}
+                    className={`cursor-pointer mr-1 ${likes ? 'text-blue-500' : 'text-gray-500'}`}
+                  />
                   <span>{likes}</span>
                 </div>
                 <div className="flex items-center">
-                  <FaThumbsDown onClick={handleDownvote} className="cursor-pointer mr-1 hover:text-red-500" />
+                  <FaThumbsDown
+                    onClick={handleDownvote}
+                    className={`cursor-pointer mr-1 ${dislikes ? 'text-red-500' : 'text-gray-500'}`}
+                  />
                   <span>{dislikes}</span>
                 </div>
               </div>
@@ -216,7 +217,7 @@ const BlogView = () => {
                 </li>
               ))
             ) : (
-              <p>No Comments found.</p>
+              <NoPostsFoundMessage/>
             )}
           </ul>
           </div>

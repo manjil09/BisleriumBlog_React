@@ -8,6 +8,10 @@ import Navigation from './NavBar/Navigation';
 import ProfilePage from './ProfilePage/ProfilePage ';
 import Home from './HomePage/Home';
 import MyBlog from './MyBlogsPage/MyBlog';
+import ChangePassword from './ProfilePage/ChangePassword';
+import NotificationsPage from './NotificationsPage/NotificationsPage';
+import BlogByMonthChart from './BlogByMonthChart';
+
 
 
 
@@ -24,8 +28,13 @@ function App() {
         <Route path="/blogView/:id" element={<BlogView />}></Route>
         <Route path="/myBlog" element={<MyBlog />}></Route>
         <Route path="/profile" element={<ProfilePage />}></Route>
+        <Route path="/changepassword" element={<ChangePassword />}></Route>
+        <Route path="/notificationsPage" element={<BlogByMonthChart />}></Route>
+
+
 
         {/* <Route path ="/ " element={<AdminDashboard/>}></Route> */}
+        ChangePassword
       </Routes>
     </BrowserRouter>
 

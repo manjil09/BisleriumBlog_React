@@ -6,6 +6,9 @@ import getUserDataFromToken from '../tokenUtils';
 import { FaPlus, FaSearch } from 'react-icons/fa'; // Importing icons
 import Modal from '../Modal';
 import CreateBlog from '../CreateBlogPage/CreateBlog';
+import Footer from '../NavBar/Footer';
+import NoPostsFoundMessage from '../components/NoPostsFoundMessage';
+
 export const BAS_URL = "https://localhost:7271/";
 function MyBlog() {
   const [blogPosts, setBlogPosts] = useState([]);
@@ -117,7 +120,7 @@ function MyBlog() {
           </div>
         </div>
         {filteredBlogPosts.length === 0 ? (
-          <p className="text-lg">No blog posts found.</p>
+          <NoPostsFoundMessage/>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBlogPosts.map(post => (
@@ -125,7 +128,7 @@ function MyBlog() {
                 <img src={`${BAS_URL}/${post.imageUrl}`} alt="Blog Image" className="w-full h-64 object-cover" />
                 <div className="p-4">
                   <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                  <p className="text-gray-700 mb-4">{post.body}</p>``
+                  <p className="text-gray-700 mb-4">{post.body}</p>
                   <p className="text-sm text-gray-500">Blog Post Date: {moment(post.updatedAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
                   <div className="flex mt-4">
                     <button className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => setEditingBlog(post)}>Edit</button>
@@ -157,6 +160,8 @@ function MyBlog() {
           </div>
         )}
       </div>
+      <Footer /> {/* Include Footer component */}
+
     </>
   );
 }

@@ -6,8 +6,8 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-lg font-semibold">Your Company Name</h2>
-            <p className="text-sm">A short description about your company.</p>
+            <h2 className="text-lg font-semibold">Bislerium Company</h2>
+          
           </div>
           <div>
             <h3 className="text-lg font-semibold">Quick Links</h3>
@@ -19,9 +19,9 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold">Follow Us</h3>
             <ul className="mt-2">
-              <li className="mb-1"><a href="#" className="hover:text-white">Facebook</a></li>
+              <li className="mb-1"><a href="https://github.com/RamNP" className="hover:text-white">GitHub</a></li>
+              <li className="mb-1"><a href="http://localhost:3000/" className="hover:text-white">Bislerium compny</a></li>
               <li className="mb-1"><a href="#" className="hover:text-white">Twitter</a></li>
-              <li className="mb-1"><a href="#" className="hover:text-white">Instagram</a></li>
             </ul>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
 import Footer from '../NavBar/Footer';
+import NoPostsFoundMessage from '../components/NoPostsFoundMessage';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -103,6 +104,10 @@ const Home = () => {
                 <div className="ml-2">
                   <h3 className="text-lg font-bold mb-2">{blog.title}</h3>
                   <p className="text-gray-700 ">{blog.body}</p>
+                  {/* <p className="text-gray-700 ">{blog.userName}</p> */}
+                  <p className="text-gray-700">
+                    By: {blog.userName}
+                  </p>
                   <p className="text-gray-600">
                     Last Updated: {new Date(blog.updatedAt).toLocaleString()}
                   </p>
@@ -110,7 +115,7 @@ const Home = () => {
               </div>
             ))
           ) : (
-            <p>No blogs found.</p>
+            <NoPostsFoundMessage/>
           )}
         </div>
         <div className="flex justify-center mt-4">

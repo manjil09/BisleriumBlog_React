@@ -28,9 +28,9 @@ const Dashboard = () => {
         setQueryParams({ ...queryParams, year: e.target.value });
     };
 
-    const handleSortByChange = (e) => {
-        setQueryParams({ ...queryParams, sortBy: e.target.value });
-    };
+    // const handleSortByChange = (e) => {
+    //     setQueryParams({ ...queryParams, sortBy: e.target.value });
+    // };
 
     const handleIsAscendingChange = (e) => {
         setQueryParams({ ...queryParams, isAscending: e.target.value === "true" });
@@ -85,14 +85,13 @@ const Dashboard = () => {
                             ))}
                         </select>
                     </div>
-                    <div>
+                    {/* <div>
                         <label htmlFor="sortBy">Sort By:</label>
                         <select id="sortBy" onChange={handleSortByChange} value={queryParams.sortBy} className="border border-gray-300 rounded-md">
                             <option value="popularity">Popularity</option>
                             <option value="date">Date</option>
-                            {/* Add options for other sorting */}
                         </select>
-                    </div>
+                    </div> */}
                     <div>
                         <label htmlFor="isAscending">Ascending:</label>
                         <select id="isAscending" onChange={handleIsAscendingChange} value={queryParams.isAscending} className="border border-gray-300 rounded-md">

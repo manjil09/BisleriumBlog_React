@@ -22,7 +22,11 @@ function MyBlog() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showMore, setShowMore] = useState(false);
 
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
   const userData = getUserDataFromToken();
   const authToken = JSON.parse(localStorage.getItem('token'));
   const headers = {
@@ -135,13 +139,19 @@ function MyBlog() {
         {filteredBlogPosts.length === 0 ? (
           <NoPostsFoundMessage/>
         ) : (
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBlogPosts.map(post => (
               <div key={post.id} className="bg-white rounded-lg overflow-hidden shadow-md">
                 <img src={`${BAS_URL}/${post.imageUrl}`} alt="Blog Image" className="w-full h-64 object-cover" />
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                  <p className="text-gray-700 mb-4">{post.body}</p>
+                <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
+                  <p className="text-gray-700 mb-4" style={{ maxHeight: showMore ? 'none' : '2.8em', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.body}</p>
+                  {post.body.length > 100 && (
+                    <button className="text-blue-500 hover:underline" onClick={toggleShowMore}>
+                      {showMore ? 'See less' : 'See more'}
+                    </button>
+                  )}
                   <p className="text-sm text-gray-500">Blog Post Date: {moment(post.updatedAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
                   <div className="flex mt-4">
                     <button className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => setEditingBlog(post)}>Edit</button>

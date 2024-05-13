@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navigation from '../NavBar/Navigation';
 import { useParams } from 'react-router-dom';
-import { FaThumbsUp, FaThumbsDown, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaThumbsUp,FaHeart, FaThumbsDown, FaEdit, FaTrash } from 'react-icons/fa';
+
 import getUserDataFromToken from '../tokenUtils';
 import { BAS_URL } from '../Constants';
 import LoginDialogue from '../components/LoginDialogue';
@@ -328,14 +329,15 @@ const BlogView = () => {
                         {comment.body}
                         <div className="flex items-center mt-1">
                           <div className="flex items-center mr-4">
-                            <FaThumbsUp
+                            <FaHeart
                               onClick={() => handleCommentUpvote(comment.id)}
                               className={`cursor-pointer mr-1 }`}
+                              
                             />
                             <span>{comment.totalUpvotes}</span>
                           </div>
                           <div className="flex items-center" >
-                            <FaThumbsDown
+                            <FaHeart
                               onClick={() => handleCommentDownvote(comment.id)}
                               className={`cursor-pointer mr-1 `}
                             />

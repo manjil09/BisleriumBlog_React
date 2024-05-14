@@ -15,9 +15,9 @@ const CreateBlog = ({ onClose }) => {
   const authToken = JSON.parse(localStorage.getItem('token'));
 
 
-   // Now you can use getUserDataFromToken wherever needed
-   const userData = getUserDataFromToken();
-   console.log("messageToken" ,authToken)
+  // Now you can use getUserDataFromToken wherever needed
+  const userData = getUserDataFromToken();
+  console.log("messageToken", authToken)
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -27,7 +27,7 @@ const CreateBlog = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!image) {
       setErrorMessage('Image is required');
       notify();
@@ -36,36 +36,41 @@ const CreateBlog = ({ onClose }) => {
       //ramm
       return; // Stop the function execution if image is not provided
     }
-    
+
     try {
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('body', body);
-      formData.append('image', image); // Append image to formData
-      formData.append('userId', userData.userId);
+      if (userData) {
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('body', body);
+        formData.append('image', image); // Append image to formData
+        formData.append('userId', userData.userId);
 
-      const response = await axios.post(
-        'https://localhost:7271/api/blog/add',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'multipart/form-data' // Set content type to multipart/form-data for file upload
+        const response = await axios.post(
+          'https://localhost:7271/api/blog/add',
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              'Content-Type': 'multipart/form-data' // Set content type to multipart/form-data for file upload
+            }
           }
-        }
-      );
+        );
 
-      console.log('Blog post created successfully:', response.data);
-      setErrorMessage('Blog post created successfully:');
+        console.log('Blog post created successfully:', response.data);
+        setErrorMessage('Blog post created successfully:');
         notify();
-      window.location.href = '/myBlog'; 
-
+        window.location.href = '/myBlog';
+      } else {
+        setErrorMessage('You are not logged in! Please login before creating blog.');
+        notify();
+      }
       // Optionally, you can redirect the user to another page or perform any other action upon successful creation of the blog post.
     } catch (error) {
       if (error.response) {
         console.error('Server responded with error status:', error.response.status);
         console.error('Error details:', error.response.data);
-        setErrorMessage(error.response.data.message);
+        // setErrorMessage(error.response.data.message);
+        setErrorMessage('Blog post failed. Please check if valid data is entered in each field.');
         notify();
 
       } else if (error.request) {

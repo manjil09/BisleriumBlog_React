@@ -329,7 +329,7 @@ const BlogView = () => {
                         {comment.body}
                         <div className="flex items-center mt-1">
                           <div className="flex items-center mr-4">
-                            <FaHeart
+                            <FaThumbsUp
                               onClick={() => handleCommentUpvote(comment.id)}
                               className={`cursor-pointer mr-1 }`}
                               
@@ -337,7 +337,7 @@ const BlogView = () => {
                             <span>{comment.totalUpvotes}</span>
                           </div>
                           <div className="flex items-center" >
-                            <FaHeart
+                            <FaThumbsDown
                               onClick={() => handleCommentDownvote(comment.id)}
                               className={`cursor-pointer mr-1 `}
                             />
